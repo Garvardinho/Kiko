@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Kiko</string>
+    <string name="home">Home</string>
+    <string name="favorites">Favorites</string>
+    <string name="ratings">Ratings</string>
+    <string name="search">Search</string>
+    <string name="search_string_movies">Movies</string>
+    <string name="now_playing">Now Playing</string>
+    <string name="movie_title">Movie Title</string>
+    <string name="upcoming">Upcoming</string>
+    <string name="upcoming_date">%d-%d-%d</string>
 </resources>
