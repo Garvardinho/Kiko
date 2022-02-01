@@ -12,6 +12,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.garvardinho.kiko.R
 import com.garvardinho.kiko.databinding.HomeFragmentBinding
 import com.garvardinho.kiko.model.Movie
+import com.garvardinho.kiko.view.home.recyclerviews.KOnItemClickListener
+import com.garvardinho.kiko.view.home.recyclerviews.MovieListSourceImpl
+import com.garvardinho.kiko.view.home.recyclerviews.adapters.NowPlayingMoviesAdapter
+import com.garvardinho.kiko.view.home.recyclerviews.adapters.UpcomingMoviesAdapter
 import com.garvardinho.kiko.viewmodel.AppState
 import com.garvardinho.kiko.viewmodel.MainViewModel
 
@@ -35,17 +39,16 @@ class HomeFragment : Fragment() {
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         viewModel.liveData.observe(viewLifecycleOwner, { renderData(it) })
         viewModel.getMoviesFromLocalResource()
+        requireActivity().actionBar?.setDisplayHomeAsUpEnabled(false)
     }
 
     private fun renderData(appState: AppState) {
         when (appState) {
             is AppState.Success -> {
-                binding.loadingIndicator.visibility = View.GONE
+                setMoviesData(ArrayList(appState.nowPlayingMoviesData), true)
+                setMoviesData(ArrayList(appState.upcomingMoviesData), false)
                 binding.homeFragmentContent.visibility = View.VISIBLE
-                val nowPlayingMoviesData: ArrayList<Movie> = ArrayList(appState.nowPlayingMoviesData)
-                val upcomingMoviesData: ArrayList<Movie> = ArrayList(appState.upcomingMoviesData)
-                setNowPlayingMoviesData(nowPlayingMoviesData)
-                setUpcomingMoviesData(upcomingMoviesData)
+                binding.loadingIndicator.visibility = View.GONE
             }
             is AppState.Loading -> {
                 binding.loadingIndicator.visibility = View.VISIBLE
@@ -58,28 +61,32 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun setNowPlayingMoviesData(nowPlayingMoviesData: ArrayList<Movie>) {
+    private fun setMoviesData(moviesData: ArrayList<Movie>, isNowPlaying: Boolean) {
         val layoutManager = LinearLayoutManager(context)
-        val data = MovieListSourceImpl(nowPlayingMoviesData)
-        val adapter = NowPlayingMoviesAdapter(data)
-        val nowPlayingMoviesRecyclerView: RecyclerView = binding.nowPlayingView
+        val data = MovieListSourceImpl(moviesData)
+        val adapter =
+            if (isNowPlaying) NowPlayingMoviesAdapter(data)
+            else UpcomingMoviesAdapter(data)
+        val recyclerView: RecyclerView =
+            if (isNowPlaying) binding.nowPlayingView
+            else binding.upcomingView
+
+        adapter.setOnItemClickListener(object : KOnItemClickListener {
+            override fun onItemClickListener(v: View, position: Int) {
+                requireActivity()
+                    .supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.main_fragment, MovieDetailsFragment
+                        .newInstance(data.getCardData(position)))
+                    .addToBackStack(null)
+                    .commit()
+            }
+        })
 
         layoutManager.orientation = LinearLayoutManager.HORIZONTAL
-        nowPlayingMoviesRecyclerView.setHasFixedSize(true)
-        nowPlayingMoviesRecyclerView.layoutManager = layoutManager
-        nowPlayingMoviesRecyclerView.adapter = adapter
-    }
-
-    private fun setUpcomingMoviesData(upcomingMoviesData: ArrayList<Movie>) {
-        val layoutManager = LinearLayoutManager(context)
-        val data = MovieListSourceImpl(upcomingMoviesData)
-        val adapter = UpcomingMoviesAdapter(data)
-        val nowPlayingMoviesRecyclerView: RecyclerView = binding.upcomingView
-
-        layoutManager.orientation = LinearLayoutManager.HORIZONTAL
-        nowPlayingMoviesRecyclerView.setHasFixedSize(true)
-        nowPlayingMoviesRecyclerView.layoutManager = layoutManager
-        nowPlayingMoviesRecyclerView.adapter = adapter
+        recyclerView.setHasFixedSize(true)
+        recyclerView.layoutManager = layoutManager
+        recyclerView.adapter = adapter
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -100,7 +107,6 @@ class HomeFragment : Fragment() {
                 override fun onQueryTextChange(p0: String?): Boolean {
                     return false
                 }
-
             }
         )
         super.onCreateOptionsMenu(menu, inflater)

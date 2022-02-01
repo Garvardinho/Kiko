@@ -1,4 +1,4 @@
-package com.garvardinho.kiko.view.home
+package com.garvardinho.kiko.view.home.recyclerviews.adapters
 
 import android.view.LayoutInflater
 import android.view.View
@@ -9,9 +9,13 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.garvardinho.kiko.R
 import com.garvardinho.kiko.model.Movie
+import com.garvardinho.kiko.view.home.recyclerviews.KOnItemClickListener
+import com.garvardinho.kiko.view.home.recyclerviews.MovieListSource
 
 class NowPlayingMoviesAdapter(private val movieList: MovieListSource)
-    : RecyclerView.Adapter<NowPlayingMoviesAdapter.ViewHolder>() {
+    : RecyclerView.Adapter<NowPlayingMoviesAdapter.ViewHolder>(), MoviesAdapter {
+
+    private var onItemClickListener: KOnItemClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v: View = LayoutInflater.from(parent.context)
@@ -27,6 +31,10 @@ class NowPlayingMoviesAdapter(private val movieList: MovieListSource)
         return movieList.getSize()
     }
 
+    override fun setOnItemClickListener(onItemClickListener: KOnItemClickListener) {
+        this.onItemClickListener = onItemClickListener
+    }
+
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private var image: AppCompatImageView = itemView.findViewById(R.id.movie_image)
         private val favorite: AppCompatImageView = itemView.findViewById(R.id.button_favorite)
@@ -34,8 +42,17 @@ class NowPlayingMoviesAdapter(private val movieList: MovieListSource)
         private val year: TextView = itemView.findViewById(R.id.movie_year)
         private val rating: TextView = itemView.findViewById(R.id.movie_rating)
 
+        init {
+            itemView.setOnClickListener { v ->
+                if (onItemClickListener != null) {
+                    onItemClickListener?.onItemClickListener(v, adapterPosition)
+                }
+            }
+        }
+
         fun setData(cardData: Movie) {
-            image.setImageDrawable(AppCompatResources.getDrawable(itemView.context, R.drawable.ic_heart))
+            image.setImageDrawable(AppCompatResources.getDrawable(itemView.context,
+                R.drawable.ic_heart))
             favorite.background = if (cardData.isFavourite)
                 AppCompatResources.getDrawable(itemView.context, R.drawable.ic_heart)
             else

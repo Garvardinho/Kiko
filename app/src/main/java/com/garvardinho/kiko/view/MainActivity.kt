@@ -2,6 +2,7 @@ package com.garvardinho.kiko.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE
 import com.garvardinho.kiko.R
 import com.garvardinho.kiko.databinding.MainActivityBinding
@@ -22,7 +23,17 @@ class MainActivity : AppCompatActivity() {
         }
 
         supportActionBar?.title = null
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         initBottomNavigation()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.home) {
+            finish()
+            supportFragmentManager.popBackStack()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun initBottomNavigation() {
@@ -34,6 +45,7 @@ class MainActivity : AppCompatActivity() {
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.main_fragment, HomeFragment())
                         .setTransition(TRANSIT_FRAGMENT_FADE)
+                        .addToBackStack(null)
                         .commit()
                     return@setOnItemSelectedListener true
                 }
@@ -42,6 +54,7 @@ class MainActivity : AppCompatActivity() {
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.main_fragment, FavoritesFragment())
                         .setTransition(TRANSIT_FRAGMENT_FADE)
+                        .addToBackStack(null)
                         .commit()
                     return@setOnItemSelectedListener true
                 }
@@ -50,6 +63,7 @@ class MainActivity : AppCompatActivity() {
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.main_fragment, RatingsFragment())
                         .setTransition(TRANSIT_FRAGMENT_FADE)
+                        .addToBackStack(null)
                         .commit()
                     return@setOnItemSelectedListener true
                 }
