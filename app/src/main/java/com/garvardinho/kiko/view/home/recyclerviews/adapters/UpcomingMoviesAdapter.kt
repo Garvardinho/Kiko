@@ -15,7 +15,7 @@ import com.garvardinho.kiko.view.home.recyclerviews.MovieListSource
 class UpcomingMoviesAdapter(private val movieList: MovieListSource)
     : RecyclerView.Adapter<UpcomingMoviesAdapter.ViewHolder>(), MoviesAdapter {
 
-    private var onItemClickListener: KOnItemClickListener? = null
+private var onItemClickListener: KOnItemClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v: View = LayoutInflater.from(parent.context)
@@ -43,9 +43,7 @@ class UpcomingMoviesAdapter(private val movieList: MovieListSource)
 
         init {
             itemView.setOnClickListener { v ->
-                if (onItemClickListener != null) {
-                    onItemClickListener?.onItemClickListener(v, adapterPosition)
-                }
+                onItemClickListener?.setListener(v, adapterPosition)
             }
         }
 

@@ -16,6 +16,7 @@ import com.garvardinho.kiko.view.home.recyclerviews.KOnItemClickListener
 import com.garvardinho.kiko.view.home.recyclerviews.MovieListSourceImpl
 import com.garvardinho.kiko.view.home.recyclerviews.adapters.NowPlayingMoviesAdapter
 import com.garvardinho.kiko.view.home.recyclerviews.adapters.UpcomingMoviesAdapter
+import com.garvardinho.kiko.view.openFragment
 import com.garvardinho.kiko.viewmodel.AppState
 import com.garvardinho.kiko.viewmodel.MainViewModel
 
@@ -23,7 +24,7 @@ class HomeFragment : Fragment() {
 
     private var _binding: HomeFragmentBinding? = null
     private val binding get() = _binding!!
-    private lateinit var viewModel: MainViewModel
+    private val viewModel: MainViewModel by lazy { ViewModelProvider(this)[MainViewModel::class.java] }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,7 +37,6 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         viewModel.liveData.observe(viewLifecycleOwner, { renderData(it) })
         viewModel.getMoviesFromLocalResource()
         requireActivity().actionBar?.setDisplayHomeAsUpEnabled(false)
@@ -72,14 +72,9 @@ class HomeFragment : Fragment() {
             else binding.upcomingView
 
         adapter.setOnItemClickListener(object : KOnItemClickListener {
-            override fun onItemClickListener(v: View, position: Int) {
-                requireActivity()
-                    .supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.main_fragment, MovieDetailsFragment
-                        .newInstance(data.getCardData(position)))
-                    .addToBackStack(null)
-                    .commit()
+            override fun setListener(v: View, position: Int) {
+                requireActivity().supportFragmentManager
+                    .openFragment(MovieDetailsFragment.newInstance(data.getCardData(position)))
             }
         })
 

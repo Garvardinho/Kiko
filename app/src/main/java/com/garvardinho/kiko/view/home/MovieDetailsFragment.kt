@@ -4,6 +4,7 @@ import android.os.Build
 import android.os.Bundle
 import android.text.Html
 import android.view.*
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.appcompat.content.res.AppCompatResources
 import com.garvardinho.kiko.R
@@ -42,26 +43,17 @@ class MovieDetailsFragment : Fragment() {
     }
 
     private fun setData() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            binding.movieTitle.text = Html.fromHtml(
-                "<b>${getString(R.string.details_movie_title)}</b> ${movie.title}",
-                Html.FROM_HTML_MODE_COMPACT)
-            binding.movieDate.text =
-                Html.fromHtml("<b>${getString(R.string.details_movie_date)}</b> ${
-                    getString(R.string.movie_date,
-                        movie.year,
-                        movie.month,
-                        movie.dayOfMonth)}",
-                    Html.FROM_HTML_MODE_COMPACT)
-            binding.movieRating.text =
-                Html.fromHtml("<b>${getString(R.string.details_movie_rating)}</b> ${
-                    movie.rating}",
-                    Html.FROM_HTML_MODE_COMPACT)
-            binding.movieDescription.text =
-                Html.fromHtml("<b>${getString(R.string.details_movie_description)}</b> ${
-                    movie.description ?: ""}",
-                    Html.FROM_HTML_MODE_COMPACT)
-        }
+        binding.movieTitle.setTextWithBoldTitle(getString(R.string.details_movie_title),
+            movie.title)
+        binding.movieDate.setTextWithBoldTitle(getString(R.string.details_movie_date),
+            getString(R.string.movie_date,
+                movie.year,
+                movie.month,
+                movie.dayOfMonth))
+        binding.movieRating.setTextWithBoldTitle(getString(R.string.details_movie_rating),
+            movie.rating.toString())
+        binding.movieDescription.setTextWithBoldTitle(getString(R.string.details_movie_description),
+            movie.description ?: "")
         binding.movieImage.setImageDrawable(AppCompatResources.getDrawable(
             requireContext(),
             R.drawable.ic_heart))
@@ -70,6 +62,13 @@ class MovieDetailsFragment : Fragment() {
                 AppCompatResources.getDrawable(requireContext(), R.drawable.ic_heart)
             else
                 AppCompatResources.getDrawable(requireContext(), R.drawable.ic_heart_outline))
+    }
+
+    private fun TextView.setTextWithBoldTitle(title: String, text: String) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            this.text = Html.fromHtml("<b>$title</b> $text",
+                Html.FROM_HTML_MODE_COMPACT)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

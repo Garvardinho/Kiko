@@ -28,14 +28,16 @@ data class Movie(
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(title)
-        parcel.writeString(imageRes)
-        parcel.writeInt(year)
-        parcel.writeInt(month)
-        parcel.writeInt(dayOfMonth)
-        parcel.writeDouble(rating)
-        parcel.writeByte(if (isFavourite) 1 else 0)
-        parcel.writeString(description)
+        parcel.apply {
+            writeString(title)
+            writeString(imageRes)
+            writeInt(year)
+            writeInt(month)
+            writeInt(dayOfMonth)
+            writeDouble(rating)
+            writeByte(if (isFavourite) 1 else 0)
+            writeString(description)
+        }
     }
 
     companion object CREATOR : Parcelable.Creator<Movie> {
