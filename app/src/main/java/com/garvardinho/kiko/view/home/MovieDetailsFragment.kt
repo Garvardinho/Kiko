@@ -9,21 +9,22 @@ import androidx.fragment.app.Fragment
 import androidx.appcompat.content.res.AppCompatResources
 import com.garvardinho.kiko.R
 import com.garvardinho.kiko.databinding.FragmentMovieDetailsBinding
-import com.garvardinho.kiko.model.Movie
+import com.garvardinho.kiko.model.MovieDTO
+import com.garvardinho.kiko.model.MovieResultDTO
 
 private const val MOVIE = "MovieDetailsFragment.Movie"
 
 class MovieDetailsFragment : Fragment() {
 
-    private var _movie: Movie? = null
-    private val movie get() = _movie!!
+    private var _movieDTO: MovieResultDTO? = null
+    private val movie get() = _movieDTO!!
     private var _binding: FragmentMovieDetailsBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            _movie = it.getParcelable(MOVIE)
+            _movieDTO = it.getParcelable(MOVIE)
         }
         setHasOptionsMenu(true)
     }
@@ -45,20 +46,16 @@ class MovieDetailsFragment : Fragment() {
     private fun setData() {
         binding.movieTitle.setTextWithBoldTitle(getString(R.string.details_movie_title),
             movie.title)
-        binding.movieDate.setTextWithBoldTitle(getString(R.string.details_movie_date),
-            getString(R.string.movie_date,
-                movie.year,
-                movie.month,
-                movie.dayOfMonth))
+        binding.movieDate.setTextWithBoldTitle(getString(R.string.details_movie_date), movie.release_date ?: "Unknown")
         binding.movieRating.setTextWithBoldTitle(getString(R.string.details_movie_rating),
-            movie.rating.toString())
+            movie.vote_average.toString())
         binding.movieDescription.setTextWithBoldTitle(getString(R.string.details_movie_description),
-            movie.description ?: "")
+            movie.overview ?: "")
         binding.movieImage.setImageDrawable(AppCompatResources.getDrawable(
             requireContext(),
             R.drawable.ic_heart))
         binding.buttonFavorite.setImageDrawable(
-            if (movie.isFavourite)
+            if (movie.isFavourite == true)
                 AppCompatResources.getDrawable(requireContext(), R.drawable.ic_heart)
             else
                 AppCompatResources.getDrawable(requireContext(), R.drawable.ic_heart_outline))
@@ -94,10 +91,10 @@ class MovieDetailsFragment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(movie: Movie) =
+        fun newInstance(movieDTO: MovieResultDTO) =
             MovieDetailsFragment().apply {
                 arguments = Bundle().apply {
-                    putParcelable(MOVIE, movie)
+                    putParcelable(MOVIE, movieDTO)
                 }
             }
     }

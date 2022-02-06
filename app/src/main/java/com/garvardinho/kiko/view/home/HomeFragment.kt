@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.garvardinho.kiko.R
 import com.garvardinho.kiko.databinding.HomeFragmentBinding
-import com.garvardinho.kiko.model.Movie
+import com.garvardinho.kiko.model.MovieResultDTO
 import com.garvardinho.kiko.view.home.recyclerviews.KOnItemClickListener
 import com.garvardinho.kiko.view.home.recyclerviews.MovieListSourceImpl
 import com.garvardinho.kiko.view.home.recyclerviews.adapters.NowPlayingMoviesAdapter
@@ -38,15 +38,14 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.liveData.observe(viewLifecycleOwner, { renderData(it) })
-        viewModel.getMoviesFromLocalResource()
+        viewModel.getMoviesFromServer()
         requireActivity().actionBar?.setDisplayHomeAsUpEnabled(false)
     }
 
     private fun renderData(appState: AppState) {
         when (appState) {
             is AppState.Success -> {
-                setMoviesData(ArrayList(appState.nowPlayingMoviesData), true)
-                setMoviesData(ArrayList(appState.upcomingMoviesData), false)
+                setMoviesData(appState.nowPlayingMoviesData, true)
                 binding.homeFragmentContent.visibility = View.VISIBLE
                 binding.loadingIndicator.visibility = View.GONE
             }
@@ -61,7 +60,7 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun setMoviesData(moviesData: ArrayList<Movie>, isNowPlaying: Boolean) {
+    private fun setMoviesData(moviesData: List<MovieResultDTO>, isNowPlaying: Boolean) {
         val layoutManager = LinearLayoutManager(context)
         val data = MovieListSourceImpl(moviesData)
         val adapter =

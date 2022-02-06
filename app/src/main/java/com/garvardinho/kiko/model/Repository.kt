@@ -1,5 +1,6 @@
 package com.garvardinho.kiko.model
 
 interface Repository {
-    fun getMoviesFromServer(): List<Movie>
+    fun getNowPlayingMoviesFromServer()
+    fun getUpcomingMoviesFromServer()
 }

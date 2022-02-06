@@ -8,7 +8,8 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.garvardinho.kiko.R
-import com.garvardinho.kiko.model.Movie
+import com.garvardinho.kiko.model.MovieDTO
+import com.garvardinho.kiko.model.MovieResultDTO
 import com.garvardinho.kiko.view.home.recyclerviews.KOnItemClickListener
 import com.garvardinho.kiko.view.home.recyclerviews.MovieListSource
 
@@ -48,17 +49,17 @@ class NowPlayingMoviesAdapter(private val movieList: MovieListSource)
             }
         }
 
-        fun setData(cardData: Movie) {
+        fun setData(cardData: MovieResultDTO) {
             image.setImageDrawable(AppCompatResources.getDrawable(itemView.context,
                 R.drawable.ic_heart))
-            favorite.background = if (cardData.isFavourite)
+            favorite.background = if (cardData.isFavourite == true)
                 AppCompatResources.getDrawable(itemView.context, R.drawable.ic_heart)
             else
                 AppCompatResources.getDrawable(itemView.context, R.drawable.ic_heart_outline)
 
             title.text = cardData.title
-            year.text = cardData.year.toString()
-            rating.text = cardData.rating.toString()
+            year.text = cardData.release_date?.substring(0, 4)
+            rating.text = cardData.vote_average.toString()
         }
     }
 }

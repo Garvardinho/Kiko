@@ -1,27 +1,32 @@
 package com.garvardinho.kiko.viewmodel
 
+import MovieLoadedListener
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.garvardinho.kiko.model.MovieDTO
 import com.garvardinho.kiko.model.Repository
 import com.garvardinho.kiko.model.RepositoryImpl
-import java.lang.Thread.sleep
 
 class MainViewModel(
     private val liveDataToObserve: MutableLiveData<AppState> = MutableLiveData(),
-    private val repositoryImpl: Repository = RepositoryImpl()
+    private val repositoryImpl: Repository = RepositoryImpl(object : MovieLoadedListener {
+        override fun onLoaded(movieDTOS: MovieDTO) {
+            liveDataToObserve.value = AppState.Success(movieDTOS.results)
+        }
+
+        override fun onFailed(throwable: Throwable) {
+            throwable.printStackTrace()
+        }
+
+    }),
 ) : ViewModel() {
 
     val liveData: LiveData<AppState>
         get() = liveDataToObserve
 
-    fun getMoviesFromLocalResource() {
+    fun getMoviesFromServer() {
         liveDataToObserve.value = AppState.Loading
-        Thread {
-            sleep(2000)
-            liveDataToObserve.postValue(AppState.Success(
-                repositoryImpl.getMoviesFromServer(),
-                repositoryImpl.getMoviesFromServer()))
-        }.start()
+        repositoryImpl.getNowPlayingMoviesFromServer()
     }
 }

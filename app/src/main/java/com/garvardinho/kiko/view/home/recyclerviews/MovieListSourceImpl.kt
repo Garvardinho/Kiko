@@ -1,10 +1,11 @@
 package com.garvardinho.kiko.view.home.recyclerviews
 
-import com.garvardinho.kiko.model.Movie
+import com.garvardinho.kiko.model.MovieDTO
+import com.garvardinho.kiko.model.MovieResultDTO
 
-class MovieListSourceImpl(private val dataSource: List<Movie>) : MovieListSource {
+class MovieListSourceImpl(private val dataSource: List<MovieResultDTO>) : MovieListSource {
 
-    override fun getCardData(position: Int): Movie {
+    override fun getCardData(position: Int): MovieResultDTO {
         return dataSource[position]
     }
 
