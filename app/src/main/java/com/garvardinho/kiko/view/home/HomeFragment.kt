@@ -20,6 +20,9 @@ import com.garvardinho.kiko.view.openFragment
 import com.garvardinho.kiko.viewmodel.AppState
 import com.garvardinho.kiko.viewmodel.MainViewModel
 
+const val NOW_PLAYING = 1
+const val UPCOMING = 2
+
 class HomeFragment : Fragment() {
 
     private var _binding: HomeFragmentBinding? = null
@@ -45,7 +48,8 @@ class HomeFragment : Fragment() {
     private fun renderData(appState: AppState) {
         when (appState) {
             is AppState.Success -> {
-                setMoviesData(appState.nowPlayingMoviesData, true)
+                setMoviesData(appState.nowPlayingMoviesData, NOW_PLAYING)
+                setMoviesData(appState.upcomingMoviesData, UPCOMING)
                 binding.homeFragmentContent.visibility = View.VISIBLE
                 binding.loadingIndicator.visibility = View.GONE
             }
@@ -60,14 +64,14 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun setMoviesData(moviesData: List<MovieResultDTO>, isNowPlaying: Boolean) {
+    private fun setMoviesData(moviesData: List<MovieResultDTO>, mode: Int) {
         val layoutManager = LinearLayoutManager(context)
         val data = MovieListSourceImpl(moviesData)
         val adapter =
-            if (isNowPlaying) NowPlayingMoviesAdapter(data)
+            if (mode == NOW_PLAYING) NowPlayingMoviesAdapter(data)
             else UpcomingMoviesAdapter(data)
         val recyclerView: RecyclerView =
-            if (isNowPlaying) binding.nowPlayingView
+            if (mode == NOW_PLAYING) binding.nowPlayingView
             else binding.upcomingView
 
         adapter.setOnItemClickListener(object : KOnItemClickListener {

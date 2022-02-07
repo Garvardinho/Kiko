@@ -11,8 +11,8 @@ import com.garvardinho.kiko.model.RepositoryImpl
 class MainViewModel(
     private val liveDataToObserve: MutableLiveData<AppState> = MutableLiveData(),
     private val repositoryImpl: Repository = RepositoryImpl(object : MovieLoadedListener {
-        override fun onLoaded(movieDTOS: MovieDTO) {
-            liveDataToObserve.value = AppState.Success(movieDTOS.results)
+        override fun onLoaded(nowPlayingMovieDTOS: MovieDTO, upcomingMovieDTOS: MovieDTO) {
+            liveDataToObserve.value = AppState.Success(nowPlayingMovieDTOS.results, upcomingMovieDTOS.results)
         }
 
         override fun onFailed(throwable: Throwable) {
@@ -27,6 +27,6 @@ class MainViewModel(
 
     fun getMoviesFromServer() {
         liveDataToObserve.value = AppState.Loading
-        repositoryImpl.getNowPlayingMoviesFromServer()
+        repositoryImpl.getMoviesFromServer()
     }
 }

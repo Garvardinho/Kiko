@@ -2,7 +2,7 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="128dp"
-    android:layout_height="256dp"
+    android:layout_height="240dp"
     android:layout_margin="8dp"
     app:cardCornerRadius="15dp">
 
@@ -13,7 +13,7 @@
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/upcoming_movie_image"
             android:layout_width="match_parent"
-            android:layout_height="196dp"
+            android:layout_height="164dp"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -31,6 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
+            android:maxLines="3"
             android:textAppearance="?attr/textAppearanceSubtitle2"
             app:layout_constraintTop_toBottomOf="@+id/upcoming_movie_image" />
 
@@ -42,7 +43,7 @@
             android:gravity="center"
             android:textAppearance="?attr/textAppearanceSubtitle2"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/upcoming_movie_title" />
+            app:layout_constraintBottom_toBottomOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

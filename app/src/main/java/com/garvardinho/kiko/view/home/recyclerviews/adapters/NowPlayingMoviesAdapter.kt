@@ -8,7 +8,6 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.garvardinho.kiko.R
-import com.garvardinho.kiko.model.MovieDTO
 import com.garvardinho.kiko.model.MovieResultDTO
 import com.garvardinho.kiko.view.home.recyclerviews.KOnItemClickListener
 import com.garvardinho.kiko.view.home.recyclerviews.MovieListSource
@@ -20,7 +19,7 @@ class NowPlayingMoviesAdapter(private val movieList: MovieListSource)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v: View = LayoutInflater.from(parent.context)
-            .inflate(R.layout.movie_card_view, parent, false)
+            .inflate(R.layout.now_playing_card_view, parent, false)
         return ViewHolder(v)
     }
 
