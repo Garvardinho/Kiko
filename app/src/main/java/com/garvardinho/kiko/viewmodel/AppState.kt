@@ -1,6 +1,5 @@
 package com.garvardinho.kiko.viewmodel
 
-import com.garvardinho.kiko.model.MovieDTO
 import com.garvardinho.kiko.model.MovieResultDTO
 
 sealed class AppState {

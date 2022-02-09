@@ -3,7 +3,6 @@ package com.garvardinho.kiko.view.home
 import android.app.AlertDialog
 import android.app.SearchManager
 import android.content.Context
-import android.content.DialogInterface
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.view.*

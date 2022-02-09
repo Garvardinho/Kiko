@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.appcompat.content.res.AppCompatResources
 import com.garvardinho.kiko.R
 import com.garvardinho.kiko.databinding.FragmentMovieDetailsBinding
-import com.garvardinho.kiko.model.MovieDTO
 import com.garvardinho.kiko.model.MovieResultDTO
 
 private const val MOVIE = "MovieDetailsFragment.Movie"

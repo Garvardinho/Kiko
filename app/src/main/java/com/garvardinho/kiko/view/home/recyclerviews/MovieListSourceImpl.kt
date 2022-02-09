@@ -1,6 +1,5 @@
 package com.garvardinho.kiko.view.home.recyclerviews
 
-import com.garvardinho.kiko.model.MovieDTO
 import com.garvardinho.kiko.model.MovieResultDTO
 
 class MovieListSourceImpl(private val dataSource: List<MovieResultDTO>) : MovieListSource {
