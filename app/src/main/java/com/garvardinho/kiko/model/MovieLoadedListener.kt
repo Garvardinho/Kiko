@@ -1,4 +1,4 @@
-import com.garvardinho.kiko.model.MovieDTO
+package com.garvardinho.kiko.model
 
 interface MovieLoadedListener {
     fun onLoaded(nowPlayingMovieDTOS: MovieDTO, upcomingMovieDTOS: MovieDTO)

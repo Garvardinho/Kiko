@@ -1,6 +1,6 @@
 package com.garvardinho.kiko.viewmodel
 
-import MovieLoadedListener
+import com.garvardinho.kiko.model.MovieLoadedListener
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,7 +16,7 @@ class MainViewModel(
         }
 
         override fun onFailed(throwable: Throwable) {
-            throwable.printStackTrace()
+            liveDataToObserve.postValue(AppState.Error(throwable))
         }
 
     }),
@@ -27,6 +27,6 @@ class MainViewModel(
 
     fun getMoviesFromServer() {
         liveDataToObserve.value = AppState.Loading
-        repositoryImpl.getMoviesFromServer()
+        repositoryImpl.loadMoviesFromServer()
     }
 }

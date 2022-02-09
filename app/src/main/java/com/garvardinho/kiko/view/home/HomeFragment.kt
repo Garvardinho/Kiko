@@ -1,7 +1,9 @@
 package com.garvardinho.kiko.view.home
 
+import android.app.AlertDialog
 import android.app.SearchManager
 import android.content.Context
+import android.content.DialogInterface
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.view.*
@@ -58,6 +60,7 @@ class HomeFragment : Fragment() {
                 binding.homeFragmentContent.visibility = View.GONE
             }
             is AppState.Error -> {
+                handleError(appState.error)
                 binding.loadingIndicator.visibility = View.GONE
                 binding.homeFragmentContent.visibility = View.GONE
             }
@@ -85,6 +88,16 @@ class HomeFragment : Fragment() {
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = adapter
+    }
+
+    private fun handleError(error: Throwable) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Error")
+            .setMessage("Check your Internet connection")
+            .setCancelable(true)
+            .setPositiveButton("Got it!") { dialog, _ ->
+                dialog.cancel()
+            }.show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

@@ -8,7 +8,6 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.garvardinho.kiko.R
-import com.garvardinho.kiko.model.MovieDTO
 import com.garvardinho.kiko.model.MovieResultDTO
 import com.garvardinho.kiko.view.home.recyclerviews.KOnItemClickListener
 import com.garvardinho.kiko.view.home.recyclerviews.MovieListSource
