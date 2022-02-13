@@ -1,4 +1,4 @@
-package com.garvardinho.kiko.view.home.recyclerviews
+package com.garvardinho.kiko.view.recyclerviews
 
 import com.garvardinho.kiko.model.MovieResultDTO
 

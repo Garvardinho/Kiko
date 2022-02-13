@@ -1,15 +1,13 @@
 package com.garvardinho.kiko.view.home
 
-import android.os.Build
 import android.os.Bundle
-import android.text.Html
 import android.view.*
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.appcompat.content.res.AppCompatResources
 import com.garvardinho.kiko.R
 import com.garvardinho.kiko.databinding.FragmentMovieDetailsBinding
 import com.garvardinho.kiko.model.MovieResultDTO
+import com.garvardinho.kiko.view.setTextWithBoldTitle
 
 private const val MOVIE = "MovieDetailsFragment.Movie"
 
@@ -48,7 +46,7 @@ class MovieDetailsFragment : Fragment() {
         binding.movieDate.setTextWithBoldTitle(getString(R.string.details_movie_date), movie.release_date ?: "Unknown")
         binding.movieRating.setTextWithBoldTitle(getString(R.string.details_movie_rating),
             movie.vote_average.toString())
-        binding.movieDescription.setTextWithBoldTitle(getString(R.string.details_movie_description),
+        binding.movieOverview.setTextWithBoldTitle(getString(R.string.details_movie_overview),
             movie.overview ?: "")
         binding.movieImage.setImageDrawable(AppCompatResources.getDrawable(
             requireContext(),
@@ -58,13 +56,6 @@ class MovieDetailsFragment : Fragment() {
                 AppCompatResources.getDrawable(requireContext(), R.drawable.ic_heart)
             else
                 AppCompatResources.getDrawable(requireContext(), R.drawable.ic_heart_outline))
-    }
-
-    private fun TextView.setTextWithBoldTitle(title: String, text: String) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            this.text = Html.fromHtml("<b>$title</b> $text",
-                Html.FROM_HTML_MODE_COMPACT)
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

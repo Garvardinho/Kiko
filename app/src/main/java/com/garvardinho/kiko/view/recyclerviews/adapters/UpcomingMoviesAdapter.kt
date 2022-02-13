@@ -1,4 +1,4 @@
-package com.garvardinho.kiko.view.home.recyclerviews.adapters
+package com.garvardinho.kiko.view.recyclerviews.adapters
 
 import android.view.LayoutInflater
 import android.view.View
@@ -9,8 +9,8 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.garvardinho.kiko.R
 import com.garvardinho.kiko.model.MovieResultDTO
-import com.garvardinho.kiko.view.home.recyclerviews.KOnItemClickListener
-import com.garvardinho.kiko.view.home.recyclerviews.MovieListSource
+import com.garvardinho.kiko.view.recyclerviews.KOnItemClickListener
+import com.garvardinho.kiko.view.recyclerviews.MovieListSource
 
 class UpcomingMoviesAdapter(private val movieList: MovieListSource)
     : RecyclerView.Adapter<UpcomingMoviesAdapter.ViewHolder>(), MoviesAdapter {
