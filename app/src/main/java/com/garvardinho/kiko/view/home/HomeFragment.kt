@@ -1,5 +1,6 @@
 package com.garvardinho.kiko.view.home
 
+import android.app.AlertDialog
 import android.app.SearchManager
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
@@ -11,15 +12,23 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.garvardinho.kiko.R
 import com.garvardinho.kiko.databinding.HomeFragmentBinding
-import com.garvardinho.kiko.model.Movie
+import com.garvardinho.kiko.model.MovieResultDTO
+import com.garvardinho.kiko.view.home.recyclerviews.KOnItemClickListener
+import com.garvardinho.kiko.view.home.recyclerviews.MovieListSourceImpl
+import com.garvardinho.kiko.view.home.recyclerviews.adapters.NowPlayingMoviesAdapter
+import com.garvardinho.kiko.view.home.recyclerviews.adapters.UpcomingMoviesAdapter
+import com.garvardinho.kiko.view.openFragment
 import com.garvardinho.kiko.viewmodel.AppState
 import com.garvardinho.kiko.viewmodel.MainViewModel
+
+const val NOW_PLAYING = 1
+const val UPCOMING = 2
 
 class HomeFragment : Fragment() {
 
     private var _binding: HomeFragmentBinding? = null
     private val binding get() = _binding!!
-    private lateinit var viewModel: MainViewModel
+    private val viewModel: MainViewModel by lazy { ViewModelProvider(this)[MainViewModel::class.java] }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,54 +41,62 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         viewModel.liveData.observe(viewLifecycleOwner, { renderData(it) })
-        viewModel.getMoviesFromLocalResource()
+        viewModel.getMoviesFromServer()
+        requireActivity().actionBar?.setDisplayHomeAsUpEnabled(false)
     }
 
     private fun renderData(appState: AppState) {
         when (appState) {
             is AppState.Success -> {
-                binding.loadingIndicator.visibility = View.GONE
+                setMoviesData(appState.nowPlayingMoviesData, NOW_PLAYING)
+                setMoviesData(appState.upcomingMoviesData, UPCOMING)
                 binding.homeFragmentContent.visibility = View.VISIBLE
-                val nowPlayingMoviesData: ArrayList<Movie> = ArrayList(appState.nowPlayingMoviesData)
-                val upcomingMoviesData: ArrayList<Movie> = ArrayList(appState.upcomingMoviesData)
-                setNowPlayingMoviesData(nowPlayingMoviesData)
-                setUpcomingMoviesData(upcomingMoviesData)
+                binding.loadingIndicator.visibility = View.GONE
             }
             is AppState.Loading -> {
                 binding.loadingIndicator.visibility = View.VISIBLE
                 binding.homeFragmentContent.visibility = View.GONE
             }
             is AppState.Error -> {
+                handleError(appState.error)
                 binding.loadingIndicator.visibility = View.GONE
                 binding.homeFragmentContent.visibility = View.GONE
             }
         }
     }
 
-    private fun setNowPlayingMoviesData(nowPlayingMoviesData: ArrayList<Movie>) {
+    private fun setMoviesData(moviesData: List<MovieResultDTO>, mode: Int) {
         val layoutManager = LinearLayoutManager(context)
-        val data = MovieListSourceImpl(nowPlayingMoviesData)
-        val adapter = NowPlayingMoviesAdapter(data)
-        val nowPlayingMoviesRecyclerView: RecyclerView = binding.nowPlayingView
+        val data = MovieListSourceImpl(moviesData)
+        val adapter =
+            if (mode == NOW_PLAYING) NowPlayingMoviesAdapter(data)
+            else UpcomingMoviesAdapter(data)
+        val recyclerView: RecyclerView =
+            if (mode == NOW_PLAYING) binding.nowPlayingView
+            else binding.upcomingView
+
+        adapter.setOnItemClickListener(object : KOnItemClickListener {
+            override fun setListener(v: View, position: Int) {
+                requireActivity().supportFragmentManager
+                    .openFragment(MovieDetailsFragment.newInstance(data.getCardData(position)))
+            }
+        })
 
         layoutManager.orientation = LinearLayoutManager.HORIZONTAL
-        nowPlayingMoviesRecyclerView.setHasFixedSize(true)
-        nowPlayingMoviesRecyclerView.layoutManager = layoutManager
-        nowPlayingMoviesRecyclerView.adapter = adapter
+        recyclerView.setHasFixedSize(true)
+        recyclerView.layoutManager = layoutManager
+        recyclerView.adapter = adapter
     }
 
-    private fun setUpcomingMoviesData(upcomingMoviesData: ArrayList<Movie>) {
-        val layoutManager = LinearLayoutManager(context)
-        val data = MovieListSourceImpl(upcomingMoviesData)
-        val adapter = UpcomingMoviesAdapter(data)
-        val nowPlayingMoviesRecyclerView: RecyclerView = binding.upcomingView
-
-        layoutManager.orientation = LinearLayoutManager.HORIZONTAL
-        nowPlayingMoviesRecyclerView.setHasFixedSize(true)
-        nowPlayingMoviesRecyclerView.layoutManager = layoutManager
-        nowPlayingMoviesRecyclerView.adapter = adapter
+    private fun handleError(error: Throwable) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Error")
+            .setMessage("Check your Internet connection")
+            .setCancelable(true)
+            .setPositiveButton("Got it!") { dialog, _ ->
+                dialog.cancel()
+            }.show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -100,7 +117,6 @@ class HomeFragment : Fragment() {
                 override fun onQueryTextChange(p0: String?): Boolean {
                     return false
                 }
-
             }
         )
         super.onCreateOptionsMenu(menu, inflater)

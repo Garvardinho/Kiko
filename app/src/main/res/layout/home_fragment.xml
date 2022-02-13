@@ -35,7 +35,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/movie_card_view" />
+            tools:listitem="@layout/now_playing_card_view" />
 
         <TextView
             android:id="@+id/upcoming"

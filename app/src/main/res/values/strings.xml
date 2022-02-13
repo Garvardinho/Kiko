@@ -8,5 +8,9 @@
     <string name="now_playing">Now Playing</string>
     <string name="movie_title">Movie Title</string>
     <string name="upcoming">Upcoming</string>
-    <string name="upcoming_date">%d-%d-%d</string>
+    <string name="movie_date">%d-%d-%d</string>
+    <string name="details_movie_title">Title:</string>
+    <string name="details_movie_date">Date:</string>
+    <string name="details_movie_rating">Rating:</string>
+    <string name="details_movie_description">Description:</string>
 </resources>

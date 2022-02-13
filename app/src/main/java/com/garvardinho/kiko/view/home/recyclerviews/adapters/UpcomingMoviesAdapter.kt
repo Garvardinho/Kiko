@@ -1,4 +1,4 @@
-package com.garvardinho.kiko.view.home
+package com.garvardinho.kiko.view.home.recyclerviews.adapters
 
 import android.view.LayoutInflater
 import android.view.View
@@ -8,10 +8,14 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.garvardinho.kiko.R
-import com.garvardinho.kiko.model.Movie
+import com.garvardinho.kiko.model.MovieResultDTO
+import com.garvardinho.kiko.view.home.recyclerviews.KOnItemClickListener
+import com.garvardinho.kiko.view.home.recyclerviews.MovieListSource
 
 class UpcomingMoviesAdapter(private val movieList: MovieListSource)
-    : RecyclerView.Adapter<UpcomingMoviesAdapter.ViewHolder>() {
+    : RecyclerView.Adapter<UpcomingMoviesAdapter.ViewHolder>(), MoviesAdapter {
+
+    private var onItemClickListener: KOnItemClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v: View = LayoutInflater.from(parent.context)
@@ -27,25 +31,31 @@ class UpcomingMoviesAdapter(private val movieList: MovieListSource)
         return movieList.getSize()
     }
 
+    override fun setOnItemClickListener(onItemClickListener: KOnItemClickListener) {
+        this.onItemClickListener = onItemClickListener
+    }
+
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private var image: AppCompatImageView = itemView.findViewById(R.id.upcoming_movie_image)
         private val favorite: AppCompatImageView = itemView.findViewById(R.id.upcoming_button_favorite)
         private val title: TextView = itemView.findViewById(R.id.upcoming_movie_title)
         private val date: TextView = itemView.findViewById(R.id.upcoming_date)
 
-        fun setData(cardData: Movie) {
+        init {
+            itemView.setOnClickListener { v ->
+                onItemClickListener?.setListener(v, adapterPosition)
+            }
+        }
+
+        fun setData(cardData: MovieResultDTO) {
             image.setImageDrawable(AppCompatResources.getDrawable(itemView.context, R.drawable.ic_heart_outline))
-            favorite.background = if (cardData.isFavourite)
+            favorite.background = if (cardData.isFavourite == true)
                 AppCompatResources.getDrawable(itemView.context, R.drawable.ic_heart)
             else
                 AppCompatResources.getDrawable(itemView.context, R.drawable.ic_heart_outline)
 
             title.text = cardData.title
-            date.text = itemView.context.getString(
-                R.string.upcoming_date,
-                cardData.year,
-                cardData.month,
-                cardData.dayOfMonth)
+            date.text = cardData.release_date
         }
     }
 }
