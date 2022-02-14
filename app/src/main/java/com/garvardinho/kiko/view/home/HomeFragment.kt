@@ -13,10 +13,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.garvardinho.kiko.R
 import com.garvardinho.kiko.databinding.HomeFragmentBinding
 import com.garvardinho.kiko.model.MovieResultDTO
-import com.garvardinho.kiko.view.home.recyclerviews.KOnItemClickListener
-import com.garvardinho.kiko.view.home.recyclerviews.MovieListSourceImpl
-import com.garvardinho.kiko.view.home.recyclerviews.adapters.NowPlayingMoviesAdapter
-import com.garvardinho.kiko.view.home.recyclerviews.adapters.UpcomingMoviesAdapter
+import com.garvardinho.kiko.view.recyclerviews.KOnItemClickListener
+import com.garvardinho.kiko.view.recyclerviews.MovieListSourceImpl
+import com.garvardinho.kiko.view.recyclerviews.adapters.NowPlayingMoviesAdapter
+import com.garvardinho.kiko.view.recyclerviews.adapters.UpcomingMoviesAdapter
 import com.garvardinho.kiko.view.openFragment
 import com.garvardinho.kiko.viewmodel.AppState
 import com.garvardinho.kiko.viewmodel.MainViewModel

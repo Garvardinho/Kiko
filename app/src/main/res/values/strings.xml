@@ -12,5 +12,6 @@
     <string name="details_movie_title">Title:</string>
     <string name="details_movie_date">Date:</string>
     <string name="details_movie_rating">Rating:</string>
-    <string name="details_movie_description">Description:</string>
+    <string name="details_movie_overview">Description:</string>
+    <string name="overview_short">%s…</string>
 </resources>

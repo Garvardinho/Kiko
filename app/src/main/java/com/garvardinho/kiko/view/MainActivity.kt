@@ -1,14 +1,18 @@
 package com.garvardinho.kiko.view
 
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Html
 import android.view.MenuItem
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE
 import com.garvardinho.kiko.R
 import com.garvardinho.kiko.databinding.MainActivityBinding
 import com.garvardinho.kiko.view.home.HomeFragment
+import com.garvardinho.kiko.view.ratings.RatingsFragment
 import com.google.android.material.navigation.NavigationBarView
 
 class MainActivity : AppCompatActivity() {
@@ -70,4 +74,11 @@ fun FragmentManager.openFragment(fragment: Fragment) {
         .setTransition(TRANSIT_FRAGMENT_FADE)
         .addToBackStack(null)
         .commit()
+}
+
+fun TextView.setTextWithBoldTitle(title: String, text: String) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        this.text = Html.fromHtml("<b>$title</b> $text",
+            Html.FROM_HTML_MODE_COMPACT)
+    }
 }
