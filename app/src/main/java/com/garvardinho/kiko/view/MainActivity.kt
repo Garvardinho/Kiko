@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(mainActivityBinding.root)
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                .replace(R.id.main_fragment, HomeFragment.newInstance())
+                .replace(R.id.main_fragment, HomeFragment())
                 .commitNow()
         }
 

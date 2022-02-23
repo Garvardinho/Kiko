@@ -12,6 +12,7 @@ import com.garvardinho.kiko.model.MovieResultDTO
 import com.garvardinho.kiko.view.recyclerviews.KOnItemClickListener
 import com.garvardinho.kiko.view.recyclerviews.MovieListSource
 import com.garvardinho.kiko.view.setTextWithBoldTitle
+import com.squareup.picasso.Picasso
 
 class RatingMoviesAdapter(private val movieList: MovieListSource) :
     RecyclerView.Adapter<RatingMoviesAdapter.ViewHolder>(), MoviesAdapter {
@@ -51,8 +52,12 @@ class RatingMoviesAdapter(private val movieList: MovieListSource) :
         }
 
         fun setData(cardData: MovieResultDTO) {
-            image.setImageDrawable(AppCompatResources.getDrawable(itemView.context,
-                R.drawable.ic_heart))
+            Picasso
+                .get()
+                .load("https://www.themoviedb.org/t/p/original/${cardData.poster_path}")
+                .placeholder(AppCompatResources.getDrawable(itemView.context, R.drawable.ic_panorama)!!)
+                .into(image)
+
             favorite.background = if (cardData.isFavourite == true)
                 AppCompatResources.getDrawable(itemView.context, R.drawable.ic_heart)
             else
@@ -74,7 +79,7 @@ class RatingMoviesAdapter(private val movieList: MovieListSource) :
                 itemView.context.getString(R.string.details_movie_overview),
                 itemView.context.getString(
                     R.string.overview_short,
-                    cardData.overview?.substring(0, 60)
+                    cardData.overview?.substring(0, cardData.overview.indexOf(' ', 90))
                 )
             )
         }
