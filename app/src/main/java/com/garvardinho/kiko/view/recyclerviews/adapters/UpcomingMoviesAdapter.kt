@@ -11,6 +11,7 @@ import com.garvardinho.kiko.R
 import com.garvardinho.kiko.model.MovieResultDTO
 import com.garvardinho.kiko.view.recyclerviews.KOnItemClickListener
 import com.garvardinho.kiko.view.recyclerviews.MovieListSource
+import com.squareup.picasso.Picasso
 
 class UpcomingMoviesAdapter(private val movieList: MovieListSource)
     : RecyclerView.Adapter<UpcomingMoviesAdapter.ViewHolder>(), MoviesAdapter {
@@ -48,7 +49,12 @@ class UpcomingMoviesAdapter(private val movieList: MovieListSource)
         }
 
         fun setData(cardData: MovieResultDTO) {
-            image.setImageDrawable(AppCompatResources.getDrawable(itemView.context, R.drawable.ic_heart_outline))
+            Picasso
+                .get()
+                .load("https://www.themoviedb.org/t/p/original/${cardData.poster_path}")
+                .placeholder(AppCompatResources.getDrawable(itemView.context, R.drawable.ic_panorama)!!)
+                .into(image)
+
             favorite.background = if (cardData.isFavourite == true)
                 AppCompatResources.getDrawable(itemView.context, R.drawable.ic_heart)
             else

@@ -9,11 +9,11 @@ data class MovieDTO(
 
 data class MovieResultDTO(
     val title: String = "New movie",
-    val imageRes: String?,
+    val poster_path: String?,
     val release_date: String?,
     val vote_average: Double = 10.0,
     val isFavourite: Boolean? = false,
-    val overview: String? = null
+    val overview: String? = null,
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString() ?: "",
@@ -30,7 +30,7 @@ data class MovieResultDTO(
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.apply {
             writeString(title)
-            writeString(imageRes)
+            writeString(poster_path)
             writeString(release_date)
             writeDouble(vote_average)
             writeByte(if (isFavourite == true) 1 else 0)

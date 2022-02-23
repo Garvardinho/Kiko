@@ -7,50 +7,57 @@
     android:layout_height="match_parent"
     tools:context=".view.home.HomeFragment">
 
+    <TextView
+        android:id="@+id/now_playing"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="@string/now_playing"
+        android:textAppearance="?attr/textAppearanceHeadline5"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <com.google.android.material.progressindicator.LinearProgressIndicator
-        android:id="@+id/loading_indicator"
+        android:id="@+id/now_playing_loading_indicator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:indeterminate="true"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/now_playing" />
 
-    <LinearLayout
-        android:id="@+id/home_fragment_content"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/now_playing_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@+id/loading_indicator">
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintTop_toBottomOf="@id/now_playing_loading_indicator"
+        tools:listitem="@layout/now_playing_card_view" />
 
-        <TextView
-            android:id="@+id/now_playing"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/now_playing"
-            android:layout_margin="8dp"
-            android:textAppearance="?attr/textAppearanceHeadline5" />
+    <TextView
+        android:id="@+id/upcoming"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="280dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/upcoming"
+        android:textAppearance="?attr/textAppearanceHeadline5"
+        app:layout_constraintTop_toBottomOf="@id/now_playing" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/now_playing_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/now_playing_card_view" />
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/upcoming_loading_indicator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        app:layout_constraintTop_toBottomOf="@id/upcoming"/>
 
-        <TextView
-            android:id="@+id/upcoming"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/upcoming"
-            android:layout_margin="8dp"
-            android:textAppearance="?attr/textAppearanceHeadline5" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/upcoming_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintTop_toBottomOf="@id/upcoming_loading_indicator"
+        tools:listitem="@layout/upcoming_card_view" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/upcoming_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/upcoming_card_view" />
-    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
