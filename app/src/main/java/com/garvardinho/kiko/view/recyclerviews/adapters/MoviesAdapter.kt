@@ -4,4 +4,5 @@ import com.garvardinho.kiko.view.recyclerviews.KOnItemClickListener
 
 interface MoviesAdapter {
     fun setOnItemClickListener(onItemClickListener: KOnItemClickListener)
+    fun setOnFavoriteClickListener(onFavoriteClickListener: KOnItemClickListener)
 }

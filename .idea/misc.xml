@@ -3,9 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Asus/AndroidStudioProjects/Kiko/app/src/main/res/drawable/ic_film.xml" value="0.23703703703703705" />
         <entry key="..\:/Users/Asus/AndroidStudioProjects/Kiko/app/src/main/res/drawable/ic_heart.xml" value="0.25462962962962965" />
         <entry key="..\:/Users/Asus/AndroidStudioProjects/Kiko/app/src/main/res/drawable/ic_heart_black.xml" value="0.25462962962962965" />
         <entry key="..\:/Users/Asus/AndroidStudioProjects/Kiko/app/src/main/res/drawable/ic_heart_outline.xml" value="0.25462962962962965" />
+        <entry key="..\:/Users/Asus/AndroidStudioProjects/Kiko/app/src/main/res/layout/favorite_card_view.xml" value="0.4" />
         <entry key="..\:/Users/Asus/AndroidStudioProjects/Kiko/app/src/main/res/layout/fragment_favorites.xml" value="0.16666666666666666" />
         <entry key="..\:/Users/Asus/AndroidStudioProjects/Kiko/app/src/main/res/layout/fragment_movie_details.xml" value="0.34513274336283184" />
         <entry key="..\:/Users/Asus/AndroidStudioProjects/Kiko/app/src/main/res/layout/fragment_ratings.xml" value="0.16666666666666666" />

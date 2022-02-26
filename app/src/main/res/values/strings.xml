@@ -14,4 +14,5 @@
     <string name="details_movie_rating">Rating:</string>
     <string name="details_movie_overview">Description:</string>
     <string name="overview_short">%s…</string>
+    <string name="empty_moves_list">You haven\'t added any</string>
 </resources>

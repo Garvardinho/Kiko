@@ -11,7 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 const val BASE_URL = "https://api.themoviedb.org/3/movie/"
 const val API_KEY = "9f9ff549c14dba55067c6fecad30cd71"
 
-class RemoteDataSource {
+class RemoteDataSource : DataSource {
     private val movieAPI = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .addConverterFactory(
@@ -29,15 +29,15 @@ class RemoteDataSource {
             .build()
     }
 
-    fun loadNowPlayingMovies(callback: Callback<MovieDTO>) {
+    override fun loadNowPlayingMovies(callback: Callback<MovieDTO>) {
         movieAPI.loadNowPlayingMovies(API_KEY, 1).enqueue(callback)
     }
 
-    fun loadUpcomingMovies(callback: Callback<MovieDTO>) {
+    override fun loadUpcomingMovies(callback: Callback<MovieDTO>) {
         movieAPI.loadUpcomingMovies(API_KEY, 1).enqueue(callback)
     }
 
-    fun loadTopRatedMovies(callback: Callback<MovieDTO>) {
+    override fun loadTopRatedMovies(callback: Callback<MovieDTO>) {
         movieAPI.loadTopRatedMovies(API_KEY, 1).enqueue(callback)
     }
 }
