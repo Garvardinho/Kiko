@@ -3,11 +3,11 @@ package com.garvardinho.kiko.view.home
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
-import androidx.appcompat.content.res.AppCompatResources
 import com.garvardinho.kiko.R
 import com.garvardinho.kiko.databinding.FragmentMovieDetailsBinding
 import com.garvardinho.kiko.model.MovieResultDTO
-import com.garvardinho.kiko.view.setTextWithBoldTitle
+import com.garvardinho.kiko.setFavoriteImage
+import com.garvardinho.kiko.setTextWithBoldTitle
 import com.squareup.picasso.Picasso
 
 private const val MOVIE = "MovieDetailsFragment.Movie"
@@ -53,11 +53,12 @@ class MovieDetailsFragment : Fragment() {
             .get()
             .load("https://www.themoviedb.org/t/p/original/${movie.poster_path}")
             .into(binding.movieImage)
-        binding.buttonFavorite.setImageDrawable(
-            if (movie.isFavourite == true)
-                AppCompatResources.getDrawable(requireContext(), R.drawable.ic_heart)
-            else
-                AppCompatResources.getDrawable(requireContext(), R.drawable.ic_heart_outline))
+        binding.buttonFavorite.setFavoriteImage(movie.isFavorite)
+
+        binding.buttonFavorite.setOnClickListener {
+            movie.isFavorite = !movie.isFavorite
+            binding.buttonFavorite.setFavoriteImage(movie.isFavorite)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

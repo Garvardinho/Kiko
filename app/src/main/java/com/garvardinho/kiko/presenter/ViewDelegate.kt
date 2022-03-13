@@ -1,8 +1,7 @@
-package com.garvardinho.kiko.view
+package com.garvardinho.kiko.presenter
 
 import com.garvardinho.kiko.model.MovieResultDTO
 
-interface KikoView {
-    fun showError()
+interface ViewDelegate {
     fun manageFavorite(movie: MovieResultDTO)
 }
