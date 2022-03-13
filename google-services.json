@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "497121570033",
+    "project_id": "kiko-811b4",
+    "storage_bucket": "kiko-811b4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:497121570033:android:aa87604e94797800704d50",
+        "android_client_info": {
+          "package_name": "com.garvardinho.kiko"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "497121570033-mo0c8jfu23tg4b8trfb9g8390elbke5p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCm8XA9TssZrFpIeb01M7jcJ7qgeuZ-Doc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "497121570033-mo0c8jfu23tg4b8trfb9g8390elbke5p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
