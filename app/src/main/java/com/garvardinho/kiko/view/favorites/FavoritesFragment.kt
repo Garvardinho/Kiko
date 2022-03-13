@@ -1,52 +1,57 @@
-package com.garvardinho.kiko.view.ratings
+package com.garvardinho.kiko.view.favorites
 
 import android.app.AlertDialog
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.garvardinho.kiko.databinding.FragmentRatingsBinding
+import com.garvardinho.kiko.databinding.FragmentFavoritesBinding
 import com.garvardinho.kiko.model.MovieResultDTO
 import com.garvardinho.kiko.openFragment
-import com.garvardinho.kiko.presenter.TopRatedViewDelegate
-import com.garvardinho.kiko.presenter.TopRatedViewPresenter
-import com.garvardinho.kiko.view.TopRatedView
+import com.garvardinho.kiko.presenter.FavoritesViewDelegate
+import com.garvardinho.kiko.presenter.FavoritesViewPresenter
+import com.garvardinho.kiko.view.FavoritesView
 import com.garvardinho.kiko.view.home.MovieDetailsFragment
 import com.garvardinho.kiko.view.recyclerviews.KOnItemClickListener
 import com.garvardinho.kiko.view.recyclerviews.MovieListSourceImpl
-import com.garvardinho.kiko.view.recyclerviews.adapters.RatingMoviesAdapter
+import com.garvardinho.kiko.view.recyclerviews.adapters.FavoriteMoviesAdapter
 
-class RatingsFragment : Fragment(), TopRatedView {
+class FavoritesFragment : Fragment(), FavoritesView {
 
-    private var _binding: FragmentRatingsBinding? = null
+    private val presenter: FavoritesViewDelegate = FavoritesViewPresenter(this)
+    private var _binding: FragmentFavoritesBinding? = null
     private val binding get() = _binding!!
-    private val presenter: TopRatedViewDelegate = TopRatedViewPresenter(this)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        _binding = FragmentRatingsBinding.inflate(inflater, container, false)
+        _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        presenter.loadTopRatedMovies()
+        binding.loadingIndicator.visibility = View.VISIBLE
+        binding.favoritesView.visibility = View.GONE
+        binding.emptyData.visibility = View.GONE
+        presenter.loadFavoriteMovies()
     }
 
-    override fun showTopRatedMovies(movies: List<MovieResultDTO>) {
-        binding.ratingsFragmentContent.visibility = VISIBLE
-        binding.loadingIndicator.visibility = GONE
+    override fun showFavoriteMovies(movies: List<MovieResultDTO>) {
+        binding.loadingIndicator.visibility = View.GONE
+        binding.favoritesView.visibility = View.VISIBLE
+        if (movies.isEmpty()) {
+            binding.emptyData.visibility = View.VISIBLE
+            return
+        }
         val layoutManager = LinearLayoutManager(context)
         val data = MovieListSourceImpl(movies)
-        val adapter = RatingMoviesAdapter(data)
-        val recyclerView: RecyclerView = binding.ratingsView
+        val adapter = FavoriteMoviesAdapter(data)
+        val recyclerView: RecyclerView = binding.favoritesView
 
         adapter.setOnItemClickListener(object : KOnItemClickListener {
             override fun setListener(v: View, position: Int) {
@@ -61,15 +66,10 @@ class RatingsFragment : Fragment(), TopRatedView {
             }
         })
 
-        layoutManager.orientation = LinearLayoutManager.VERTICAL
+        layoutManager.orientation = LinearLayoutManager.HORIZONTAL
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = adapter
-    }
-
-    override fun showTopRatedLoading() {
-        binding.ratingsFragmentContent.visibility = GONE
-        binding.loadingIndicator.visibility = VISIBLE
     }
 
     override fun showError() {

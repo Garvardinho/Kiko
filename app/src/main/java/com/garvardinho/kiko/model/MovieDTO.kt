@@ -4,7 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 
 data class MovieDTO(
-    val results: List<MovieResultDTO>
+    val results: List<MovieResultDTO>,
 )
 
 data class MovieResultDTO(
@@ -12,7 +12,7 @@ data class MovieResultDTO(
     val poster_path: String?,
     val release_date: String?,
     val vote_average: Double = 10.0,
-    val isFavourite: Boolean? = false,
+    var isFavorite: Boolean = false,
     val overview: String? = null,
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
@@ -33,7 +33,7 @@ data class MovieResultDTO(
             writeString(poster_path)
             writeString(release_date)
             writeDouble(vote_average)
-            writeByte(if (isFavourite == true) 1 else 0)
+            writeByte(if (isFavorite) 1 else 0)
             writeString(overview)
         }
     }
@@ -46,5 +46,16 @@ data class MovieResultDTO(
         override fun newArray(size: Int): Array<MovieResultDTO?> {
             return arrayOfNulls(size)
         }
+    }
+
+    fun toManaged(): MovieResultDTOManaged {
+        return MovieResultDTOManaged(
+            title,
+            poster_path,
+            release_date,
+            vote_average,
+            isFavorite,
+            overview
+        )
     }
 }
