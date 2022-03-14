@@ -9,6 +9,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.garvardinho.kiko.R
 import com.garvardinho.kiko.model.MovieResultDTO
+import com.garvardinho.kiko.setFavoriteImage
 import com.garvardinho.kiko.view.recyclerviews.KOnItemClickListener
 import com.garvardinho.kiko.view.recyclerviews.MovieListSource
 import com.squareup.picasso.Picasso
@@ -17,6 +18,7 @@ class NowPlayingMoviesAdapter(private val movieList: MovieListSource)
     : RecyclerView.Adapter<NowPlayingMoviesAdapter.ViewHolder>(), MoviesAdapter {
 
     private var onItemClickListener: KOnItemClickListener? = null
+    private var onFavoriteClickListener: KOnItemClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v: View = LayoutInflater.from(parent.context)
@@ -36,6 +38,10 @@ class NowPlayingMoviesAdapter(private val movieList: MovieListSource)
         this.onItemClickListener = onItemClickListener
     }
 
+    override fun setOnFavoriteClickListener(onFavoriteClickListener: KOnItemClickListener) {
+        this.onFavoriteClickListener = onFavoriteClickListener
+    }
+
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private var image: AppCompatImageView = itemView.findViewById(R.id.movie_image)
         private val favorite: AppCompatImageView = itemView.findViewById(R.id.button_favorite)
@@ -50,18 +56,19 @@ class NowPlayingMoviesAdapter(private val movieList: MovieListSource)
         }
 
         fun setData(cardData: MovieResultDTO) {
-            image.setImageDrawable(AppCompatResources.getDrawable(itemView.context, R.drawable.ic_heart))
-
             Picasso
                 .get()
                 .load("https://www.themoviedb.org/t/p/original/${cardData.poster_path}")
-                .placeholder(AppCompatResources.getDrawable(itemView.context, R.drawable.ic_panorama)!!)
+                .placeholder(AppCompatResources.getDrawable(itemView.context, R.drawable.ic_film)!!)
                 .into(image)
 
-            favorite.background = if (cardData.isFavourite == true)
-                AppCompatResources.getDrawable(itemView.context, R.drawable.ic_heart)
-            else
-                AppCompatResources.getDrawable(itemView.context, R.drawable.ic_heart_outline)
+            favorite.setFavoriteImage(cardData.isFavorite)
+
+            favorite.setOnClickListener {
+                cardData.isFavorite = !cardData.isFavorite
+                favorite.setFavoriteImage(cardData.isFavorite)
+                onFavoriteClickListener?.setListener(it, adapterPosition)
+            }
 
             title.text = cardData.title
             year.text = cardData.release_date?.substring(0, 4)

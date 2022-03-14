@@ -15,15 +15,15 @@ import com.garvardinho.kiko.view.recyclerviews.KOnItemClickListener
 import com.garvardinho.kiko.view.recyclerviews.MovieListSource
 import com.squareup.picasso.Picasso
 
-class RatingMoviesAdapter(private val movieList: MovieListSource) :
-    RecyclerView.Adapter<RatingMoviesAdapter.ViewHolder>(), MoviesAdapter {
+class FavoriteMoviesAdapter(private val movieList: MovieListSource)
+    : RecyclerView.Adapter<FavoriteMoviesAdapter.ViewHolder>(), MoviesAdapter  {
 
     private var onItemClickListener: KOnItemClickListener? = null
     private var onFavoriteClickListener: KOnItemClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v: View = LayoutInflater.from(parent.context)
-            .inflate(R.layout.ratings_card_view, parent, false)
+            .inflate(R.layout.favorite_card_view, parent, false)
         return ViewHolder(v)
     }
 
@@ -47,7 +47,7 @@ class RatingMoviesAdapter(private val movieList: MovieListSource) :
         private var image: AppCompatImageView = itemView.findViewById(R.id.movie_image)
         private val favorite: AppCompatImageView = itemView.findViewById(R.id.button_favorite)
         private val title: TextView = itemView.findViewById(R.id.movie_title)
-        private val date: TextView = itemView.findViewById(R.id.movie_date)
+        private val year: TextView = itemView.findViewById(R.id.movie_year)
         private val rating: TextView = itemView.findViewById(R.id.movie_rating)
         private val overview: TextView = itemView.findViewById(R.id.movie_overview)
 
@@ -76,19 +76,22 @@ class RatingMoviesAdapter(private val movieList: MovieListSource) :
                 itemView.context.getString(R.string.details_movie_title),
                 cardData.title
             )
-            date.setTextWithBoldTitle(
+
+            year.setTextWithBoldTitle(
                 itemView.context.getString(R.string.details_movie_date),
                 cardData.release_date ?: "Unknown"
             )
+
             rating.setTextWithBoldTitle(
                 itemView.context.getString(R.string.details_movie_rating),
                 cardData.vote_average.toString()
             )
+
             overview.setTextWithBoldTitle(
                 itemView.context.getString(R.string.details_movie_overview),
                 itemView.context.getString(
                     R.string.overview_short,
-                    cardData.overview?.substring(0, cardData.overview.indexOf(' ', 90))
+                    cardData.overview?.substring(0, cardData.overview.indexOf(' ', 120))
                 )
             )
         }

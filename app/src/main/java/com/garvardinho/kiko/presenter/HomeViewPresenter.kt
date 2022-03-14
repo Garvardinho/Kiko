@@ -1,8 +1,10 @@
 package com.garvardinho.kiko.presenter
 
 import com.garvardinho.kiko.model.MovieDTO
+import com.garvardinho.kiko.model.MovieResultDTO
 import com.garvardinho.kiko.model.Repository
 import com.garvardinho.kiko.model.RepositoryImpl
+import com.garvardinho.kiko.model.retrofit.RealmDataSource
 import com.garvardinho.kiko.model.retrofit.RemoteDataSource
 import com.garvardinho.kiko.view.HomeView
 import retrofit2.Call
@@ -10,17 +12,24 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class HomeViewPresenter(private val view: HomeView) : HomeViewDelegate {
-    private val repository: Repository = RepositoryImpl(RemoteDataSource())
+    private val repositoryRemote: Repository = RepositoryImpl(RemoteDataSource())
+    private val repositoryRealm: Repository = RepositoryImpl(RealmDataSource())
 
     override fun loadNowPlayingMovies() {
         view.showNowPlayingLoading()
-        repository.loadNowPlayingMoviesFromServer(object : Callback<MovieDTO> {
+        repositoryRemote.loadNowPlayingMoviesFromServer(object : Callback<MovieDTO> {
             override fun onResponse(call: Call<MovieDTO>, response: Response<MovieDTO>) {
                 if (response.body() == null || response.body()?.results == null) {
                     view.showError()
                 } else {
-                    response.body()?.results?.let {
-                        view.showNowPlayingMovies(it)
+                    response.body()?.results?.let { moviesList ->
+                        val favorites = repositoryRealm.loadFavoriteMoviesFromRealm()
+                        for (favoriteMovie in favorites) {
+                            moviesList.find { movie ->
+                                movie.title == favoriteMovie.title
+                            }?.isFavorite = true
+                        }
+                        view.showNowPlayingMovies(moviesList)
                     }
                 }
             }
@@ -33,13 +42,19 @@ class HomeViewPresenter(private val view: HomeView) : HomeViewDelegate {
 
     override fun loadUpcomingMovies() {
         view.showUpcomingLoading()
-        repository.loadUpcomingMoviesFromServer(object : Callback<MovieDTO> {
+        repositoryRemote.loadUpcomingMoviesFromServer(object : Callback<MovieDTO> {
             override fun onResponse(call: Call<MovieDTO>, response: Response<MovieDTO>) {
                 if (response.body() == null || response.body()?.results == null) {
                     view.showError()
                 } else {
-                    response.body()?.results?.let {
-                        view.showUpcomingMovies(it)
+                    response.body()?.results?.let { moviesList ->
+                        val favorites = repositoryRealm.loadFavoriteMoviesFromRealm()
+                        for (favoriteMovie in favorites) {
+                            moviesList.find { movie ->
+                                movie.title == favoriteMovie.title
+                            }?.isFavorite = true
+                        }
+                        view.showUpcomingMovies(moviesList)
                     }
                 }
             }
@@ -48,5 +63,13 @@ class HomeViewPresenter(private val view: HomeView) : HomeViewDelegate {
                 view.showError()
             }
         })
+    }
+
+    override fun manageFavorite(movie: MovieResultDTO) {
+        if (movie.isFavorite) {
+            repositoryRealm.putMovieIntoRealm(movie)
+        } else {
+            repositoryRealm.deleteMovieFromRealm(movie)
+        }
     }
 }

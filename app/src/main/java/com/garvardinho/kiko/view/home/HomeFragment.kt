@@ -6,17 +6,16 @@ import android.content.Context
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.widget.SearchView
-import androidx.core.view.size
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.garvardinho.kiko.R
 import com.garvardinho.kiko.databinding.HomeFragmentBinding
 import com.garvardinho.kiko.model.MovieResultDTO
+import com.garvardinho.kiko.openFragment
 import com.garvardinho.kiko.presenter.HomeViewDelegate
 import com.garvardinho.kiko.presenter.HomeViewPresenter
 import com.garvardinho.kiko.view.HomeView
-import com.garvardinho.kiko.view.openFragment
 import com.garvardinho.kiko.view.recyclerviews.KOnItemClickListener
 import com.garvardinho.kiko.view.recyclerviews.MovieListSourceImpl
 import com.garvardinho.kiko.view.recyclerviews.adapters.NowPlayingMoviesAdapter
@@ -61,6 +60,12 @@ class HomeFragment : Fragment(), HomeView {
             override fun setListener(v: View, position: Int) {
                 requireActivity().supportFragmentManager
                     .openFragment(MovieDetailsFragment.newInstance(data.getCardData(position)))
+            }
+        })
+
+        adapter.setOnFavoriteClickListener(object : KOnItemClickListener {
+            override fun setListener(v: View, position: Int) {
+                manageFavorite(data.getCardData(position))
             }
         })
 
@@ -124,5 +129,9 @@ class HomeFragment : Fragment(), HomeView {
             .setPositiveButton("Got it!") { dialog, _ ->
                 dialog.cancel()
             }.show()
+    }
+
+    override fun manageFavorite(movie: MovieResultDTO) {
+        presenter.manageFavorite(movie)
     }
 }

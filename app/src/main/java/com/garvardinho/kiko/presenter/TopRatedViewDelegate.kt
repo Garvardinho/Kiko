@@ -1,5 +1,5 @@
 package com.garvardinho.kiko.presenter
 
-interface TopRatedViewDelegate {
+interface TopRatedViewDelegate : ViewDelegate {
     fun loadTopRatedMovies()
 }
