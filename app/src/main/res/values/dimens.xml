@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="home_page_image_width">112dp</dimen>
+    <dimen name="home_page_image_height">168dp</dimen>
+    <dimen name="favorite_image_width">224dp</dimen>
+    <dimen name="favorite_image_height">336dp</dimen>
+    <dimen name="top_rated_image_width">96dp</dimen>
+    <dimen name="top_rated_image_height">144dp</dimen>
+</resources>

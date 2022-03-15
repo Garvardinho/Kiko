@@ -6,29 +6,24 @@ import android.content.Context
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.widget.SearchView
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.garvardinho.kiko.R
 import com.garvardinho.kiko.databinding.HomeFragmentBinding
 import com.garvardinho.kiko.model.MovieResultDTO
 import com.garvardinho.kiko.openFragment
-import com.garvardinho.kiko.presenter.HomeViewDelegate
-import com.garvardinho.kiko.presenter.HomeViewPresenter
-import com.garvardinho.kiko.view.HomeView
-import com.garvardinho.kiko.view.recyclerviews.KOnItemClickListener
-import com.garvardinho.kiko.view.recyclerviews.MovieListSourceImpl
-import com.garvardinho.kiko.view.recyclerviews.adapters.NowPlayingMoviesAdapter
-import com.garvardinho.kiko.view.recyclerviews.adapters.UpcomingMoviesAdapter
+import com.garvardinho.kiko.presenter.home.HomeViewPresenter
+import com.garvardinho.kiko.view.KOnItemClickListener
+import com.garvardinho.kiko.view.details.MovieDetailsFragment
+import moxy.MvpAppCompatFragment
+import moxy.ktx.moxyPresenter
 
-const val NOW_PLAYING = 1
-const val UPCOMING = 2
-
-class HomeFragment : Fragment(), HomeView {
+class HomeFragment : MvpAppCompatFragment(), HomeView {
 
     private var _binding: HomeFragmentBinding? = null
     private val binding get() = _binding!!
-    private val presenter: HomeViewDelegate = HomeViewPresenter(this)
+    private val presenter by moxyPresenter { HomeViewPresenter() }
+    private val nowPlayingMoviesAdapter by lazy { NowPlayingMoviesAdapter(presenter.nowPlayingCardViewPresenter) }
+    private val upcomingMoviesAdapter by lazy { UpcomingMoviesAdapter(presenter.upcomingCardViewPresenter) }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,38 +36,46 @@ class HomeFragment : Fragment(), HomeView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        presenter.loadNowPlayingMovies()
-        presenter.loadUpcomingMovies()
         requireActivity().actionBar?.setDisplayHomeAsUpEnabled(false)
     }
 
-    private fun setMoviesData(moviesData: List<MovieResultDTO>, filmType: Int) {
-        val layoutManager = LinearLayoutManager(context)
-        val data = MovieListSourceImpl(moviesData)
-        val adapter =
-            if (filmType == NOW_PLAYING) NowPlayingMoviesAdapter(data)
-            else UpcomingMoviesAdapter(data)
-        val recyclerView: RecyclerView =
-            if (filmType == NOW_PLAYING) binding.nowPlayingView
-            else binding.upcomingView
+    private fun setNowPlayingMoviesData() {
+        binding.nowPlayingView.layoutManager = LinearLayoutManager(requireContext())
+            .apply { orientation = LinearLayoutManager.HORIZONTAL }
+        binding.nowPlayingView.adapter = nowPlayingMoviesAdapter
 
-        adapter.setOnItemClickListener(object : KOnItemClickListener {
+        nowPlayingMoviesAdapter.setOnItemClickListener(object : KOnItemClickListener {
             override fun setListener(v: View, position: Int) {
-                requireActivity().supportFragmentManager
-                    .openFragment(MovieDetailsFragment.newInstance(data.getCardData(position)))
+                requireActivity().supportFragmentManager.openFragment(
+                    MovieDetailsFragment.newInstance(
+                        presenter.nowPlayingCardViewPresenter.getMovie(position)))
             }
         })
 
-        adapter.setOnFavoriteClickListener(object : KOnItemClickListener {
+        nowPlayingMoviesAdapter.setOnFavoriteClickListener(object : KOnItemClickListener {
             override fun setListener(v: View, position: Int) {
-                manageFavorite(data.getCardData(position))
+                manageFavorite(presenter.nowPlayingCardViewPresenter.getMovie(position))
             }
         })
+    }
 
-        layoutManager.orientation = LinearLayoutManager.HORIZONTAL
-        recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager = layoutManager
-        recyclerView.adapter = adapter
+    private fun setUpcomingMoviesData() {
+        binding.upcomingView.layoutManager = LinearLayoutManager(requireContext())
+            .apply { orientation = LinearLayoutManager.HORIZONTAL }
+        binding.upcomingView.adapter = upcomingMoviesAdapter
+
+        upcomingMoviesAdapter.setOnItemClickListener(object : KOnItemClickListener {
+            override fun setListener(v: View, position: Int) {
+                requireActivity().supportFragmentManager.openFragment(
+                    MovieDetailsFragment.newInstance(
+                        presenter.upcomingCardViewPresenter.getMovie(position)))
+            }
+        })
+        upcomingMoviesAdapter.setOnFavoriteClickListener(object : KOnItemClickListener {
+            override fun setListener(v: View, position: Int) {
+                manageFavorite(presenter.upcomingCardViewPresenter.getMovie(position))
+            }
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -98,27 +101,36 @@ class HomeFragment : Fragment(), HomeView {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-    override fun onDestroyView() {
-        _binding = null
-        super.onDestroyView()
-    }
-
     override fun showNowPlayingMovies(movies: List<MovieResultDTO>) {
-        binding.nowPlayingLoadingIndicator.visibility = View.GONE
-        setMoviesData(movies, NOW_PLAYING)
+        showNowPlayingLoading(false)
+        setNowPlayingMoviesData()
     }
 
     override fun showUpcomingMovies(movies: List<MovieResultDTO>) {
-        binding.upcomingLoadingIndicator.visibility = View.GONE
-        setMoviesData(movies, UPCOMING)
+        showUpcomingLoading(false)
+        setUpcomingMoviesData()
     }
 
-    override fun showNowPlayingLoading() {
-        binding.nowPlayingLoadingIndicator.visibility = View.VISIBLE
+    override fun showNowPlayingLoading(loading: Boolean) {
+        binding.nowPlayingLoadingIndicator.visibility = when (loading) {
+            true -> View.VISIBLE
+            false -> View.GONE
+        }
+        binding.nowPlayingView.visibility = when (loading) {
+            true -> View.GONE
+            false -> View.VISIBLE
+        }
     }
 
-    override fun showUpcomingLoading() {
-        binding.upcomingLoadingIndicator.visibility = View.VISIBLE
+    override fun showUpcomingLoading(loading: Boolean) {
+        binding.upcomingLoadingIndicator.visibility = when (loading) {
+            true -> View.VISIBLE
+            false -> View.GONE
+        }
+        binding.upcomingView.visibility = when (loading) {
+            true -> View.GONE
+            false -> View.VISIBLE
+        }
     }
 
     override fun showError() {
@@ -133,5 +145,10 @@ class HomeFragment : Fragment(), HomeView {
 
     override fun manageFavorite(movie: MovieResultDTO) {
         presenter.manageFavorite(movie)
+    }
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
     }
 }
