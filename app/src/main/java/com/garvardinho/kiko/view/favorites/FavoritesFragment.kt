@@ -52,7 +52,7 @@ class FavoritesFragment : MvpAppCompatFragment(), FavoritesView, BackButtonListe
 
         adapter.setOnItemClickListener(object : KOnItemClickListener {
             override fun setListener(v: View, position: Int) {
-                App.instance.router.replaceScreen(AndroidScreens.detailsScreen(
+                App.instance.router.navigateTo(AndroidScreens.detailsScreen(
                     presenter.favoritesCardViewPresenter.getMovie(position))
                 )
             }

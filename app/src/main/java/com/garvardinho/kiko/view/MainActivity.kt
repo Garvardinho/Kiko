@@ -66,31 +66,22 @@ class MainActivity : MvpAppCompatActivity() {
         bottomNavigationView.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.action_home -> {
-                    App.instance.router.replaceScreen(AndroidScreens.homeScreen())
+                    App.instance.router.navigateTo(AndroidScreens.homeScreen())
                     return@setOnItemSelectedListener true
                 }
 
                 R.id.action_favorites -> {
-                    App.instance.router.replaceScreen(AndroidScreens.favoriteScreen())
+                    App.instance.router.navigateTo(AndroidScreens.favoriteScreen())
                     return@setOnItemSelectedListener true
                 }
 
                 R.id.action_ratings -> {
-                    App.instance.router.replaceScreen(AndroidScreens.topRatedScreen())
+                    App.instance.router.navigateTo(AndroidScreens.topRatedScreen())
                     return@setOnItemSelectedListener true
                 }
             }
 
             false
-        }
-    }
-
-    override fun onBackPressed() {
-        supportFragmentManager.fragments.forEach {
-            if (it is BackButtonListener && it.backPressed()) {
-                App.instance.router.exit()
-                return
-            }
         }
     }
 }

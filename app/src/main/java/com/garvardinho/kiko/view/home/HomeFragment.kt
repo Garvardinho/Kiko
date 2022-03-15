@@ -47,7 +47,7 @@ class HomeFragment : MvpAppCompatFragment(), HomeView, BackButtonListener {
 
         nowPlayingMoviesAdapter.setOnItemClickListener(object : KOnItemClickListener {
             override fun setListener(v: View, position: Int) {
-                App.instance.router.replaceScreen(AndroidScreens.detailsScreen(
+                App.instance.router.navigateTo(AndroidScreens.detailsScreen(
                     presenter.nowPlayingCardViewPresenter.getMovie(position))
                 )
             }
@@ -67,7 +67,7 @@ class HomeFragment : MvpAppCompatFragment(), HomeView, BackButtonListener {
 
         upcomingMoviesAdapter.setOnItemClickListener(object : KOnItemClickListener {
             override fun setListener(v: View, position: Int) {
-                App.instance.router.replaceScreen(AndroidScreens.detailsScreen(
+                App.instance.router.navigateTo(AndroidScreens.detailsScreen(
                     presenter.upcomingCardViewPresenter.getMovie(position))
                 )
             }
