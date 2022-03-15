@@ -2,25 +2,27 @@ package com.garvardinho.kiko.view.details
 
 import android.os.Bundle
 import android.view.*
+import com.garvardinho.kiko.App
 import com.garvardinho.kiko.R
 import com.garvardinho.kiko.databinding.FragmentMovieDetailsBinding
 import com.garvardinho.kiko.model.MovieResultDTO
 import com.garvardinho.kiko.presenter.details.MovieDetailsViewPresenter
 import com.garvardinho.kiko.setFavoriteImage
 import com.garvardinho.kiko.setTextWithBoldTitle
+import com.garvardinho.kiko.view.BackButtonListener
 import com.squareup.picasso.Picasso
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 
 private const val MOVIE = "MovieDetailsFragment.Movie"
 
-class MovieDetailsFragment : MvpAppCompatFragment(), DetailsView {
+class MovieDetailsFragment : MvpAppCompatFragment(), DetailsView, BackButtonListener {
 
     private var _movieDTO: MovieResultDTO? = null
     private val movie get() = _movieDTO!!
     private var _binding: FragmentMovieDetailsBinding? = null
     private val binding get() = _binding!!
-    private val presenter by moxyPresenter { MovieDetailsViewPresenter() }
+    private val presenter by moxyPresenter { MovieDetailsViewPresenter(App.instance.router) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,5 +96,9 @@ class MovieDetailsFragment : MvpAppCompatFragment(), DetailsView {
                     putParcelable(MOVIE, movieDTO)
                 }
             }
+    }
+
+    override fun backPressed(): Boolean {
+        return presenter.onBackPressed()
     }
 }

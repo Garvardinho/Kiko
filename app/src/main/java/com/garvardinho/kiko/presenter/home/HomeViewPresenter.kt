@@ -7,12 +7,13 @@ import com.garvardinho.kiko.model.RepositoryImpl
 import com.garvardinho.kiko.model.retrofit.RealmDataSource
 import com.garvardinho.kiko.model.retrofit.RemoteDataSource
 import com.garvardinho.kiko.view.home.HomeView
+import com.github.terrakok.cicerone.Router
 import moxy.MvpPresenter
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class HomeViewPresenter : MvpPresenter<HomeView>(), HomeViewDelegate {
+class HomeViewPresenter(private val router: Router) : MvpPresenter<HomeView>(), HomeViewDelegate {
 
     private val repositoryRemote: Repository = RepositoryImpl(RemoteDataSource())
     private val repositoryRealm: Repository = RepositoryImpl(RealmDataSource())
@@ -84,5 +85,10 @@ class HomeViewPresenter : MvpPresenter<HomeView>(), HomeViewDelegate {
         } else {
             repositoryRealm.deleteMovieFromRealm(movie)
         }
+    }
+
+    override fun onBackPressed(): Boolean {
+        router.exit()
+        return true
     }
 }

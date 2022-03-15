@@ -6,9 +6,10 @@ import com.garvardinho.kiko.model.RepositoryImpl
 import com.garvardinho.kiko.model.retrofit.RealmDataSource
 import com.garvardinho.kiko.presenter.ViewDelegate
 import com.garvardinho.kiko.view.details.DetailsView
+import com.github.terrakok.cicerone.Router
 import moxy.MvpPresenter
 
-class MovieDetailsViewPresenter : MvpPresenter<DetailsView>(), ViewDelegate {
+class MovieDetailsViewPresenter(private val router: Router) : MvpPresenter<DetailsView>(), ViewDelegate {
 
     private val repositoryRealm: Repository = RepositoryImpl(RealmDataSource())
 
@@ -18,5 +19,10 @@ class MovieDetailsViewPresenter : MvpPresenter<DetailsView>(), ViewDelegate {
         } else {
             repositoryRealm.deleteMovieFromRealm(movie)
         }
+    }
+
+    override fun onBackPressed(): Boolean {
+        router.exit()
+        return true
     }
 }

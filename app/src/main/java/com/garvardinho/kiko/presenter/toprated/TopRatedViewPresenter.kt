@@ -7,12 +7,13 @@ import com.garvardinho.kiko.model.RepositoryImpl
 import com.garvardinho.kiko.model.retrofit.RealmDataSource
 import com.garvardinho.kiko.model.retrofit.RemoteDataSource
 import com.garvardinho.kiko.view.toprated.TopRatedView
+import com.github.terrakok.cicerone.Router
 import moxy.MvpPresenter
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class TopRatedViewPresenter : MvpPresenter<TopRatedView>(), TopRatedViewDelegate {
+class TopRatedViewPresenter(private val router: Router) : MvpPresenter<TopRatedView>(), TopRatedViewDelegate {
 
     private val repositoryRemote: Repository = RepositoryImpl(RemoteDataSource())
     private val repositoryRealm: Repository = RepositoryImpl(RealmDataSource())
@@ -56,5 +57,10 @@ class TopRatedViewPresenter : MvpPresenter<TopRatedView>(), TopRatedViewDelegate
         } else {
             repositoryRealm.deleteMovieFromRealm(movie)
         }
+    }
+
+    override fun onBackPressed(): Boolean {
+        router.exit()
+        return true
     }
 }

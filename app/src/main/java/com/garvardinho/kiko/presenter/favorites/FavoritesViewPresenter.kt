@@ -5,9 +5,10 @@ import com.garvardinho.kiko.model.Repository
 import com.garvardinho.kiko.model.RepositoryImpl
 import com.garvardinho.kiko.model.retrofit.RealmDataSource
 import com.garvardinho.kiko.view.favorites.FavoritesView
+import com.github.terrakok.cicerone.Router
 import moxy.MvpPresenter
 
-class FavoritesViewPresenter : MvpPresenter<FavoritesView>(), FavoritesViewDelegate {
+class FavoritesViewPresenter(private val router: Router) : MvpPresenter<FavoritesView>(), FavoritesViewDelegate {
 
     private val repositoryRemote: Repository = RepositoryImpl(RealmDataSource())
     private val repositoryRealm: Repository = RepositoryImpl(RealmDataSource())
@@ -31,5 +32,10 @@ class FavoritesViewPresenter : MvpPresenter<FavoritesView>(), FavoritesViewDeleg
         } else {
             repositoryRealm.deleteMovieFromRealm(movie)
         }
+    }
+
+    override fun onBackPressed(): Boolean {
+        router.exit()
+        return true
     }
 }
