@@ -2,7 +2,7 @@
     <string name="app_name">Kiko</string>
     <string name="home">Home</string>
     <string name="favorites">Favorites</string>
-    <string name="ratings">Ratings</string>
+    <string name="top_rated">Top Rated</string>
     <string name="search">Search</string>
     <string name="search_string_movies">Movies</string>
     <string name="now_playing">Now Playing</string>

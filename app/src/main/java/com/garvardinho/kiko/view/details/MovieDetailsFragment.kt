@@ -1,23 +1,26 @@
-package com.garvardinho.kiko.view.home
+package com.garvardinho.kiko.view.details
 
 import android.os.Bundle
 import android.view.*
-import androidx.fragment.app.Fragment
 import com.garvardinho.kiko.R
 import com.garvardinho.kiko.databinding.FragmentMovieDetailsBinding
 import com.garvardinho.kiko.model.MovieResultDTO
+import com.garvardinho.kiko.presenter.details.MovieDetailsViewPresenter
 import com.garvardinho.kiko.setFavoriteImage
 import com.garvardinho.kiko.setTextWithBoldTitle
 import com.squareup.picasso.Picasso
+import moxy.MvpAppCompatFragment
+import moxy.ktx.moxyPresenter
 
 private const val MOVIE = "MovieDetailsFragment.Movie"
 
-class MovieDetailsFragment : Fragment() {
+class MovieDetailsFragment : MvpAppCompatFragment(), DetailsView {
 
     private var _movieDTO: MovieResultDTO? = null
     private val movie get() = _movieDTO!!
     private var _binding: FragmentMovieDetailsBinding? = null
     private val binding get() = _binding!!
+    private val presenter by moxyPresenter { MovieDetailsViewPresenter() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +61,7 @@ class MovieDetailsFragment : Fragment() {
         binding.buttonFavorite.setOnClickListener {
             movie.isFavorite = !movie.isFavorite
             binding.buttonFavorite.setFavoriteImage(movie.isFavorite)
+            presenter.manageFavorite(movie)
         }
     }
 

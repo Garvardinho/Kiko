@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.ratings.RatingsFragment">
+    tools:context=".view.toprated.TopRatedFragment">
 
     <com.google.android.material.progressindicator.LinearProgressIndicator
         android:id="@+id/loading_indicator"
@@ -22,10 +22,10 @@
         app:layout_constraintTop_toBottomOf="@+id/loading_indicator">
 
         <TextView
-            android:id="@+id/now_playing"
+            android:id="@+id/top_rated"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/ratings"
+            android:text="@string/top_rated"
             android:layout_margin="8dp"
             android:textAppearance="?attr/textAppearanceHeadline5" />
 
@@ -35,7 +35,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/ratings_card_view" />
+            tools:listitem="@layout/top_rated_card_view" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

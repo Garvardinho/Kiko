@@ -1,27 +1,20 @@
 package com.garvardinho.kiko.view
 
-import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Html
 import android.view.MenuItem
-import android.widget.TextView
-import androidx.appcompat.content.res.AppCompatResources
-import androidx.appcompat.widget.AppCompatImageView
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE
 import com.garvardinho.kiko.R
 import com.garvardinho.kiko.databinding.MainActivityBinding
 import com.garvardinho.kiko.openFragment
 import com.garvardinho.kiko.view.favorites.FavoritesFragment
 import com.garvardinho.kiko.view.home.HomeFragment
-import com.garvardinho.kiko.view.ratings.RatingsFragment
+import com.garvardinho.kiko.view.toprated.TopRatedFragment
 import com.google.android.material.navigation.NavigationBarView
 import io.realm.Realm
 import io.realm.RealmConfiguration
+import moxy.MvpAppCompatActivity
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : MvpAppCompatActivity() {
+
     private lateinit var mainActivityBinding: MainActivityBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,7 +65,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 R.id.action_ratings -> {
-                    supportFragmentManager.openFragment(RatingsFragment())
+                    supportFragmentManager.openFragment(TopRatedFragment())
                     return@setOnItemSelectedListener true
                 }
             }

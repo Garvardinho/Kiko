@@ -1,4 +1,4 @@
-package com.garvardinho.kiko.view.ratings
+package com.garvardinho.kiko.view.toprated
 
 import android.app.AlertDialog
 import android.os.Bundle
@@ -7,31 +7,28 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.garvardinho.kiko.databinding.FragmentRatingsBinding
+import com.garvardinho.kiko.databinding.FragmentTopRatedBinding
 import com.garvardinho.kiko.model.MovieResultDTO
 import com.garvardinho.kiko.openFragment
-import com.garvardinho.kiko.presenter.TopRatedViewDelegate
-import com.garvardinho.kiko.presenter.TopRatedViewPresenter
-import com.garvardinho.kiko.view.TopRatedView
-import com.garvardinho.kiko.view.home.MovieDetailsFragment
-import com.garvardinho.kiko.view.recyclerviews.KOnItemClickListener
-import com.garvardinho.kiko.view.recyclerviews.MovieListSourceImpl
-import com.garvardinho.kiko.view.recyclerviews.adapters.RatingMoviesAdapter
+import com.garvardinho.kiko.presenter.toprated.TopRatedViewPresenter
+import com.garvardinho.kiko.view.KOnItemClickListener
+import com.garvardinho.kiko.view.details.MovieDetailsFragment
+import moxy.MvpAppCompatFragment
+import moxy.ktx.moxyPresenter
 
-class RatingsFragment : Fragment(), TopRatedView {
+class TopRatedFragment : MvpAppCompatFragment(), TopRatedView {
 
-    private var _binding: FragmentRatingsBinding? = null
+    private var _binding: FragmentTopRatedBinding? = null
     private val binding get() = _binding!!
-    private val presenter: TopRatedViewDelegate = TopRatedViewPresenter(this)
+    private val presenter by moxyPresenter { TopRatedViewPresenter() }
+    private val adapter by lazy { TopRatedMoviesAdapter(presenter.topRatedCardViewPresenter) }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        _binding = FragmentRatingsBinding.inflate(inflater, container, false)
+        _binding = FragmentTopRatedBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -43,28 +40,24 @@ class RatingsFragment : Fragment(), TopRatedView {
     override fun showTopRatedMovies(movies: List<MovieResultDTO>) {
         binding.ratingsFragmentContent.visibility = VISIBLE
         binding.loadingIndicator.visibility = GONE
-        val layoutManager = LinearLayoutManager(context)
-        val data = MovieListSourceImpl(movies)
-        val adapter = RatingMoviesAdapter(data)
-        val recyclerView: RecyclerView = binding.ratingsView
+        binding.ratingsView.layoutManager = LinearLayoutManager(context)
+            .apply { orientation = LinearLayoutManager.VERTICAL }
+        binding.ratingsView.adapter = adapter
 
         adapter.setOnItemClickListener(object : KOnItemClickListener {
             override fun setListener(v: View, position: Int) {
                 requireActivity().supportFragmentManager
-                    .openFragment(MovieDetailsFragment.newInstance(data.getCardData(position)))
+                    .openFragment(MovieDetailsFragment
+                        .newInstance(presenter.topRatedCardViewPresenter.getMovie(position))
+                    )
             }
         })
 
         adapter.setOnFavoriteClickListener(object : KOnItemClickListener {
             override fun setListener(v: View, position: Int) {
-                manageFavorite(data.getCardData(position))
+                manageFavorite(presenter.topRatedCardViewPresenter.getMovie(position))
             }
         })
-
-        layoutManager.orientation = LinearLayoutManager.VERTICAL
-        recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager = layoutManager
-        recyclerView.adapter = adapter
     }
 
     override fun showTopRatedLoading() {
