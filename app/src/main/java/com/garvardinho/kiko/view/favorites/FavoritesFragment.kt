@@ -2,28 +2,26 @@ package com.garvardinho.kiko.view.favorites
 
 import android.app.AlertDialog
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import com.garvardinho.kiko.App
 import com.garvardinho.kiko.databinding.FragmentFavoritesBinding
 import com.garvardinho.kiko.model.MovieResultDTO
-import com.garvardinho.kiko.openFragment
-import com.garvardinho.kiko.presenter.FavoritesViewDelegate
-import com.garvardinho.kiko.presenter.FavoritesViewPresenter
-import com.garvardinho.kiko.view.FavoritesView
-import com.garvardinho.kiko.view.home.MovieDetailsFragment
-import com.garvardinho.kiko.view.recyclerviews.KOnItemClickListener
-import com.garvardinho.kiko.view.recyclerviews.MovieListSourceImpl
-import com.garvardinho.kiko.view.recyclerviews.adapters.FavoriteMoviesAdapter
+import com.garvardinho.kiko.presenter.favorites.FavoritesViewPresenter
+import com.garvardinho.kiko.screens.AndroidScreens
+import com.garvardinho.kiko.view.BackButtonListener
+import com.garvardinho.kiko.view.KOnItemClickListener
+import moxy.MvpAppCompatFragment
+import moxy.ktx.moxyPresenter
 
-class FavoritesFragment : Fragment(), FavoritesView {
+class FavoritesFragment : MvpAppCompatFragment(), FavoritesView, BackButtonListener {
 
-    private val presenter: FavoritesViewDelegate = FavoritesViewPresenter(this)
     private var _binding: FragmentFavoritesBinding? = null
     private val binding get() = _binding!!
+    private val presenter by moxyPresenter { FavoritesViewPresenter(App.instance.router) }
+    private val adapter by lazy { FavoriteMoviesAdapter(presenter.favoritesCardViewPresenter) }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,7 +36,6 @@ class FavoritesFragment : Fragment(), FavoritesView {
         binding.loadingIndicator.visibility = View.VISIBLE
         binding.favoritesView.visibility = View.GONE
         binding.emptyData.visibility = View.GONE
-        presenter.loadFavoriteMovies()
     }
 
     override fun showFavoriteMovies(movies: List<MovieResultDTO>) {
@@ -48,28 +45,24 @@ class FavoritesFragment : Fragment(), FavoritesView {
             binding.emptyData.visibility = View.VISIBLE
             return
         }
-        val layoutManager = LinearLayoutManager(context)
-        val data = MovieListSourceImpl(movies)
-        val adapter = FavoriteMoviesAdapter(data)
-        val recyclerView: RecyclerView = binding.favoritesView
+
+        binding.favoritesView.layoutManager = LinearLayoutManager(context)
+            .apply { orientation = LinearLayoutManager.HORIZONTAL }
+        binding.favoritesView.adapter = adapter
 
         adapter.setOnItemClickListener(object : KOnItemClickListener {
             override fun setListener(v: View, position: Int) {
-                requireActivity().supportFragmentManager
-                    .openFragment(MovieDetailsFragment.newInstance(data.getCardData(position)))
+                App.instance.router.navigateTo(AndroidScreens.detailsScreen(
+                    presenter.favoritesCardViewPresenter.getMovie(position))
+                )
             }
         })
 
         adapter.setOnFavoriteClickListener(object : KOnItemClickListener {
             override fun setListener(v: View, position: Int) {
-                manageFavorite(data.getCardData(position))
+                manageFavorite(presenter.favoritesCardViewPresenter.getMovie(position))
             }
         })
-
-        layoutManager.orientation = LinearLayoutManager.HORIZONTAL
-        recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager = layoutManager
-        recyclerView.adapter = adapter
     }
 
     override fun showError() {
@@ -84,6 +77,10 @@ class FavoritesFragment : Fragment(), FavoritesView {
 
     override fun manageFavorite(movie: MovieResultDTO) {
         presenter.manageFavorite(movie)
+    }
+
+    override fun backPressed(): Boolean {
+        return presenter.onBackPressed()
     }
 
     override fun onDestroyView() {

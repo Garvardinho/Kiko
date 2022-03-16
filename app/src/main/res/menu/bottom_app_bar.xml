@@ -14,6 +14,6 @@
     <item
         android:id="@+id/action_ratings"
         android:icon="@drawable/ic_chart_column"
-        android:title="@string/ratings" />
+        android:title="@string/top_rated" />
 
 </menu>

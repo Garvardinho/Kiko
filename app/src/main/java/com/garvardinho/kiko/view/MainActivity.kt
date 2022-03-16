@@ -1,28 +1,22 @@
 package com.garvardinho.kiko.view
 
-import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Html
 import android.view.MenuItem
-import android.widget.TextView
-import androidx.appcompat.content.res.AppCompatResources
-import androidx.appcompat.widget.AppCompatImageView
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE
+import com.garvardinho.kiko.App
 import com.garvardinho.kiko.R
 import com.garvardinho.kiko.databinding.MainActivityBinding
-import com.garvardinho.kiko.openFragment
-import com.garvardinho.kiko.view.favorites.FavoritesFragment
+import com.garvardinho.kiko.screens.AndroidScreens
 import com.garvardinho.kiko.view.home.HomeFragment
-import com.garvardinho.kiko.view.ratings.RatingsFragment
+import com.github.terrakok.cicerone.androidx.AppNavigator
 import com.google.android.material.navigation.NavigationBarView
 import io.realm.Realm
 import io.realm.RealmConfiguration
+import moxy.MvpAppCompatActivity
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : MvpAppCompatActivity() {
+
     private lateinit var mainActivityBinding: MainActivityBinding
+    private val navigator = AppNavigator(this, R.id.main_fragment)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +41,16 @@ class MainActivity : AppCompatActivity() {
         initBottomNavigation()
     }
 
+    override fun onResumeFragments() {
+        super.onResumeFragments()
+        App.instance.navigationHolder.setNavigator(navigator)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        App.instance.navigationHolder.removeNavigator()
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.home) {
             finish()
@@ -62,17 +66,17 @@ class MainActivity : AppCompatActivity() {
         bottomNavigationView.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.action_home -> {
-                    supportFragmentManager.openFragment(HomeFragment())
+                    App.instance.router.navigateTo(AndroidScreens.homeScreen())
                     return@setOnItemSelectedListener true
                 }
 
                 R.id.action_favorites -> {
-                    supportFragmentManager.openFragment(FavoritesFragment())
+                    App.instance.router.navigateTo(AndroidScreens.favoriteScreen())
                     return@setOnItemSelectedListener true
                 }
 
                 R.id.action_ratings -> {
-                    supportFragmentManager.openFragment(RatingsFragment())
+                    App.instance.router.navigateTo(AndroidScreens.topRatedScreen())
                     return@setOnItemSelectedListener true
                 }
             }
