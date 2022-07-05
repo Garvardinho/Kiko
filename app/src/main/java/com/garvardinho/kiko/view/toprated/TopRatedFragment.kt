@@ -8,20 +8,21 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.garvardinho.kiko.App
 import com.garvardinho.kiko.databinding.FragmentTopRatedBinding
 import com.garvardinho.kiko.model.MovieResultDTO
-import com.garvardinho.kiko.openFragment
 import com.garvardinho.kiko.presenter.toprated.TopRatedViewPresenter
+import com.garvardinho.kiko.screens.AndroidScreens
+import com.garvardinho.kiko.view.BackButtonListener
 import com.garvardinho.kiko.view.KOnItemClickListener
-import com.garvardinho.kiko.view.details.MovieDetailsFragment
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 
-class TopRatedFragment : MvpAppCompatFragment(), TopRatedView {
+class TopRatedFragment : MvpAppCompatFragment(), TopRatedView, BackButtonListener {
 
     private var _binding: FragmentTopRatedBinding? = null
     private val binding get() = _binding!!
-    private val presenter by moxyPresenter { TopRatedViewPresenter() }
+    private val presenter by moxyPresenter { TopRatedViewPresenter(App.instance.router) }
     private val adapter by lazy { TopRatedMoviesAdapter(presenter.topRatedCardViewPresenter) }
 
     override fun onCreateView(
@@ -46,10 +47,9 @@ class TopRatedFragment : MvpAppCompatFragment(), TopRatedView {
 
         adapter.setOnItemClickListener(object : KOnItemClickListener {
             override fun setListener(v: View, position: Int) {
-                requireActivity().supportFragmentManager
-                    .openFragment(MovieDetailsFragment
-                        .newInstance(presenter.topRatedCardViewPresenter.getMovie(position))
-                    )
+                App.instance.router.navigateTo(AndroidScreens.detailsScreen(
+                    presenter.topRatedCardViewPresenter.getMovie(position))
+                )
             }
         })
 
@@ -77,6 +77,10 @@ class TopRatedFragment : MvpAppCompatFragment(), TopRatedView {
 
     override fun manageFavorite(movie: MovieResultDTO) {
         presenter.manageFavorite(movie)
+    }
+
+    override fun backPressed(): Boolean {
+        return presenter.onBackPressed()
     }
 
     override fun onDestroyView() {

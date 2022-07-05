@@ -4,5 +4,6 @@ import com.garvardinho.kiko.model.MovieResultDTO
 
 interface ViewDelegate {
 
+    fun onBackPressed(): Boolean
     fun manageFavorite(movie: MovieResultDTO)
 }

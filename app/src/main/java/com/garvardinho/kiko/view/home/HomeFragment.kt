@@ -7,21 +7,22 @@ import android.os.Bundle
 import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.garvardinho.kiko.App
 import com.garvardinho.kiko.R
 import com.garvardinho.kiko.databinding.HomeFragmentBinding
 import com.garvardinho.kiko.model.MovieResultDTO
-import com.garvardinho.kiko.openFragment
 import com.garvardinho.kiko.presenter.home.HomeViewPresenter
+import com.garvardinho.kiko.screens.AndroidScreens
+import com.garvardinho.kiko.view.BackButtonListener
 import com.garvardinho.kiko.view.KOnItemClickListener
-import com.garvardinho.kiko.view.details.MovieDetailsFragment
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 
-class HomeFragment : MvpAppCompatFragment(), HomeView {
+class HomeFragment : MvpAppCompatFragment(), HomeView, BackButtonListener {
 
     private var _binding: HomeFragmentBinding? = null
     private val binding get() = _binding!!
-    private val presenter by moxyPresenter { HomeViewPresenter() }
+    private val presenter by moxyPresenter { HomeViewPresenter(App.instance.router) }
     private val nowPlayingMoviesAdapter by lazy { NowPlayingMoviesAdapter(presenter.nowPlayingCardViewPresenter) }
     private val upcomingMoviesAdapter by lazy { UpcomingMoviesAdapter(presenter.upcomingCardViewPresenter) }
 
@@ -46,9 +47,9 @@ class HomeFragment : MvpAppCompatFragment(), HomeView {
 
         nowPlayingMoviesAdapter.setOnItemClickListener(object : KOnItemClickListener {
             override fun setListener(v: View, position: Int) {
-                requireActivity().supportFragmentManager.openFragment(
-                    MovieDetailsFragment.newInstance(
-                        presenter.nowPlayingCardViewPresenter.getMovie(position)))
+                App.instance.router.navigateTo(AndroidScreens.detailsScreen(
+                    presenter.nowPlayingCardViewPresenter.getMovie(position))
+                )
             }
         })
 
@@ -66,9 +67,9 @@ class HomeFragment : MvpAppCompatFragment(), HomeView {
 
         upcomingMoviesAdapter.setOnItemClickListener(object : KOnItemClickListener {
             override fun setListener(v: View, position: Int) {
-                requireActivity().supportFragmentManager.openFragment(
-                    MovieDetailsFragment.newInstance(
-                        presenter.upcomingCardViewPresenter.getMovie(position)))
+                App.instance.router.navigateTo(AndroidScreens.detailsScreen(
+                    presenter.upcomingCardViewPresenter.getMovie(position))
+                )
             }
         })
         upcomingMoviesAdapter.setOnFavoriteClickListener(object : KOnItemClickListener {
@@ -145,6 +146,10 @@ class HomeFragment : MvpAppCompatFragment(), HomeView {
 
     override fun manageFavorite(movie: MovieResultDTO) {
         presenter.manageFavorite(movie)
+    }
+
+    override fun backPressed(): Boolean {
+        return presenter.onBackPressed()
     }
 
     override fun onDestroyView() {
