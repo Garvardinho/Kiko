@@ -99,11 +99,16 @@ class TopRatedMoviesAdapter(private val presenter: CardViewPresenter) :
         }
 
         override fun setOverview(overview: String) {
+            val truncatedIndex = when (overview.length > 90) {true -> 90 false -> overview.length}
+            val truncated = when (truncatedIndex > overview.length) {
+                true -> overview.substring(0, overview.indexOf(' ', truncatedIndex))
+                false -> overview
+            }
             cardView.movieOverview.setTextWithBoldTitle(
                 cardView.root.context.getString(R.string.details_movie_overview),
                 cardView.root.context.getString(
                     R.string.overview_short,
-                    overview.substring(0, overview.indexOf(' ', 90))
+                    truncated
                 )
             )
         }
