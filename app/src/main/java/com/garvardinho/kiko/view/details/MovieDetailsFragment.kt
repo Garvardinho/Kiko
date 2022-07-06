@@ -56,7 +56,7 @@ class MovieDetailsFragment : MvpAppCompatFragment(), DetailsView, BackButtonList
             movie.overview ?: "")
         Picasso
             .get()
-            .load("https://www.themoviedb.org/t/p/original/${movie.poster_path}")
+            .load("https://image.tmdb.org/t/p/w500/${movie.poster_path}")
             .into(binding.movieImage)
         binding.buttonFavorite.setFavoriteImage(movie.isFavorite)
 
