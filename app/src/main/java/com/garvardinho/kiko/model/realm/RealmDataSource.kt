@@ -1,11 +1,11 @@
-package com.garvardinho.kiko.model.retrofit
+package com.garvardinho.kiko.model.realm
 
 import com.garvardinho.kiko.model.MovieResultDTO
 import com.garvardinho.kiko.model.MovieResultDTOManaged
 import io.realm.Realm
 import io.realm.kotlin.where
 
-class RealmDataSource : DataSource {
+class RealmDataSource : IRealmDataSource {
     private val realm = Realm.getDefaultInstance()
 
     override fun loadFavoriteMovies(): List<MovieResultDTO> {

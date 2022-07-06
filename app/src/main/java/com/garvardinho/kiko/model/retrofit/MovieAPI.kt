@@ -1,7 +1,7 @@
 package com.garvardinho.kiko.model.retrofit
 
 import com.garvardinho.kiko.model.MovieDTO
-import retrofit2.Call
+import io.reactivex.rxjava3.core.Single
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -11,17 +11,17 @@ interface MovieAPI {
     fun loadNowPlayingMovies(
         @Query("api_key") token: String,
         @Query("page") page: Int
-    ) : Call<MovieDTO>
+    ) : Single<MovieDTO>
 
     @GET("upcoming")
     fun loadUpcomingMovies(
         @Query("api_key") token: String,
         @Query("page") page: Int
-    ) : Call<MovieDTO>
+    ) : Single<MovieDTO>
 
     @GET("top_rated")
     fun loadTopRatedMovies(
         @Query("api_key") token: String,
         @Query("page") page: Int
-    ) : Call<MovieDTO>
+    ) : Single<MovieDTO>
 }

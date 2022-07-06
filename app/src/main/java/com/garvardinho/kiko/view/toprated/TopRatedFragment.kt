@@ -65,10 +65,10 @@ class TopRatedFragment : MvpAppCompatFragment(), TopRatedView, BackButtonListene
         binding.loadingIndicator.visibility = VISIBLE
     }
 
-    override fun showError() {
+    override fun showError(error: String) {
         AlertDialog.Builder(requireContext())
             .setTitle("Error")
-            .setMessage("Check your Internet connection")
+            .setMessage(error)
             .setCancelable(true)
             .setPositiveButton("Got it!") { dialog, _ ->
                 dialog.cancel()

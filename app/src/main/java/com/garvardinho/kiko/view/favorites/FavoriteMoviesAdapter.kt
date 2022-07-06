@@ -61,7 +61,7 @@ class FavoriteMoviesAdapter(private val presenter: CardViewPresenter)
 
             Picasso
                 .get()
-                .load("https://www.themoviedb.org/t/p/original/$url")
+                .load("https://image.tmdb.org/t/p/w500/$url")
                 .resize(imageWidth, imageHeight)
                 .placeholder(AppCompatResources.getDrawable(cardView.root.context,
                     R.drawable.ic_film)!!)
