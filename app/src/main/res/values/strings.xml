@@ -2,7 +2,7 @@
     <string name="app_name">Kiko</string>
     <string name="home">Home</string>
     <string name="favorites">Favorites</string>
-    <string name="ratings">Ratings</string>
+    <string name="top_rated">Top Rated</string>
     <string name="search">Search</string>
     <string name="search_string_movies">Movies</string>
     <string name="now_playing">Now Playing</string>
@@ -14,4 +14,5 @@
     <string name="details_movie_rating">Rating:</string>
     <string name="details_movie_overview">Description:</string>
     <string name="overview_short">%s…</string>
+    <string name="empty_moves_list">You haven\'t added any</string>
 </resources>

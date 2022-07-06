@@ -3,32 +3,28 @@ package com.garvardinho.kiko.view.home
 import android.app.AlertDialog
 import android.app.SearchManager
 import android.content.Context
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.widget.SearchView
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import com.garvardinho.kiko.App
 import com.garvardinho.kiko.R
 import com.garvardinho.kiko.databinding.HomeFragmentBinding
 import com.garvardinho.kiko.model.MovieResultDTO
-import com.garvardinho.kiko.view.recyclerviews.KOnItemClickListener
-import com.garvardinho.kiko.view.recyclerviews.MovieListSourceImpl
-import com.garvardinho.kiko.view.recyclerviews.adapters.NowPlayingMoviesAdapter
-import com.garvardinho.kiko.view.recyclerviews.adapters.UpcomingMoviesAdapter
-import com.garvardinho.kiko.view.openFragment
-import com.garvardinho.kiko.viewmodel.AppState
-import com.garvardinho.kiko.viewmodel.MainViewModel
+import com.garvardinho.kiko.presenter.home.HomeViewPresenter
+import com.garvardinho.kiko.screens.AndroidScreens
+import com.garvardinho.kiko.view.BackButtonListener
+import com.garvardinho.kiko.view.KOnItemClickListener
+import moxy.MvpAppCompatFragment
+import moxy.ktx.moxyPresenter
 
-const val NOW_PLAYING = 1
-const val UPCOMING = 2
-
-class HomeFragment : Fragment() {
+class HomeFragment : MvpAppCompatFragment(), HomeView, BackButtonListener {
 
     private var _binding: HomeFragmentBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: MainViewModel by lazy { ViewModelProvider(this)[MainViewModel::class.java] }
+    private val presenter by moxyPresenter { HomeViewPresenter(App.instance.router) }
+    private val nowPlayingMoviesAdapter by lazy { NowPlayingMoviesAdapter(presenter.nowPlayingCardViewPresenter) }
+    private val upcomingMoviesAdapter by lazy { UpcomingMoviesAdapter(presenter.upcomingCardViewPresenter) }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,62 +37,46 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.liveData.observe(viewLifecycleOwner, { renderData(it) })
-        viewModel.getMoviesFromServer()
         requireActivity().actionBar?.setDisplayHomeAsUpEnabled(false)
     }
 
-    private fun renderData(appState: AppState) {
-        when (appState) {
-            is AppState.Success -> {
-                setMoviesData(appState.nowPlayingMoviesData, NOW_PLAYING)
-                setMoviesData(appState.upcomingMoviesData, UPCOMING)
-                binding.homeFragmentContent.visibility = View.VISIBLE
-                binding.loadingIndicator.visibility = View.GONE
-            }
-            is AppState.Loading -> {
-                binding.loadingIndicator.visibility = View.VISIBLE
-                binding.homeFragmentContent.visibility = View.GONE
-            }
-            is AppState.Error -> {
-                handleError(appState.error)
-                binding.loadingIndicator.visibility = View.GONE
-                binding.homeFragmentContent.visibility = View.GONE
-            }
-        }
-    }
+    private fun setNowPlayingMoviesData() {
+        binding.nowPlayingView.layoutManager = LinearLayoutManager(requireContext())
+            .apply { orientation = LinearLayoutManager.HORIZONTAL }
+        binding.nowPlayingView.adapter = nowPlayingMoviesAdapter
 
-    private fun setMoviesData(moviesData: List<MovieResultDTO>, mode: Int) {
-        val layoutManager = LinearLayoutManager(context)
-        val data = MovieListSourceImpl(moviesData)
-        val adapter =
-            if (mode == NOW_PLAYING) NowPlayingMoviesAdapter(data)
-            else UpcomingMoviesAdapter(data)
-        val recyclerView: RecyclerView =
-            if (mode == NOW_PLAYING) binding.nowPlayingView
-            else binding.upcomingView
-
-        adapter.setOnItemClickListener(object : KOnItemClickListener {
+        nowPlayingMoviesAdapter.setOnItemClickListener(object : KOnItemClickListener {
             override fun setListener(v: View, position: Int) {
-                requireActivity().supportFragmentManager
-                    .openFragment(MovieDetailsFragment.newInstance(data.getCardData(position)))
+                App.instance.router.navigateTo(AndroidScreens.detailsScreen(
+                    presenter.nowPlayingCardViewPresenter.getMovie(position))
+                )
             }
         })
 
-        layoutManager.orientation = LinearLayoutManager.HORIZONTAL
-        recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager = layoutManager
-        recyclerView.adapter = adapter
+        nowPlayingMoviesAdapter.setOnFavoriteClickListener(object : KOnItemClickListener {
+            override fun setListener(v: View, position: Int) {
+                manageFavorite(presenter.nowPlayingCardViewPresenter.getMovie(position))
+            }
+        })
     }
 
-    private fun handleError(error: Throwable) {
-        AlertDialog.Builder(requireContext())
-            .setTitle("Error")
-            .setMessage("Check your Internet connection")
-            .setCancelable(true)
-            .setPositiveButton("Got it!") { dialog, _ ->
-                dialog.cancel()
-            }.show()
+    private fun setUpcomingMoviesData() {
+        binding.upcomingView.layoutManager = LinearLayoutManager(requireContext())
+            .apply { orientation = LinearLayoutManager.HORIZONTAL }
+        binding.upcomingView.adapter = upcomingMoviesAdapter
+
+        upcomingMoviesAdapter.setOnItemClickListener(object : KOnItemClickListener {
+            override fun setListener(v: View, position: Int) {
+                App.instance.router.navigateTo(AndroidScreens.detailsScreen(
+                    presenter.upcomingCardViewPresenter.getMovie(position))
+                )
+            }
+        })
+        upcomingMoviesAdapter.setOnFavoriteClickListener(object : KOnItemClickListener {
+            override fun setListener(v: View, position: Int) {
+                manageFavorite(presenter.upcomingCardViewPresenter.getMovie(position))
+            }
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -122,12 +102,58 @@ class HomeFragment : Fragment() {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+    override fun showNowPlayingMovies(movies: List<MovieResultDTO>) {
+        showNowPlayingLoading(false)
+        setNowPlayingMoviesData()
+    }
+
+    override fun showUpcomingMovies(movies: List<MovieResultDTO>) {
+        showUpcomingLoading(false)
+        setUpcomingMoviesData()
+    }
+
+    override fun showNowPlayingLoading(loading: Boolean) {
+        binding.nowPlayingLoadingIndicator.visibility = when (loading) {
+            true -> View.VISIBLE
+            false -> View.GONE
+        }
+        binding.nowPlayingView.visibility = when (loading) {
+            true -> View.GONE
+            false -> View.VISIBLE
+        }
+    }
+
+    override fun showUpcomingLoading(loading: Boolean) {
+        binding.upcomingLoadingIndicator.visibility = when (loading) {
+            true -> View.VISIBLE
+            false -> View.GONE
+        }
+        binding.upcomingView.visibility = when (loading) {
+            true -> View.GONE
+            false -> View.VISIBLE
+        }
+    }
+
+    override fun showError(error: String) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Error")
+            .setMessage(error)
+            .setCancelable(true)
+            .setPositiveButton("Got it!") { dialog, _ ->
+                dialog.cancel()
+            }.show()
+    }
+
+    override fun manageFavorite(movie: MovieResultDTO) {
+        presenter.manageFavorite(movie)
+    }
+
+    override fun backPressed(): Boolean {
+        return presenter.onBackPressed()
+    }
+
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()
-    }
-
-    companion object {
-        fun newInstance() = HomeFragment()
     }
 }
