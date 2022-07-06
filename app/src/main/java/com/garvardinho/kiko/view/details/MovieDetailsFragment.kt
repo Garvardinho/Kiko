@@ -1,6 +1,9 @@
 package com.garvardinho.kiko.view.details
 
+import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
+import android.text.Layout.JUSTIFICATION_MODE_INTER_WORD
 import android.view.*
 import com.garvardinho.kiko.App
 import com.garvardinho.kiko.R
@@ -46,6 +49,7 @@ class MovieDetailsFragment : MvpAppCompatFragment(), DetailsView, BackButtonList
         setData()
     }
 
+    @SuppressLint("WrongConstant")
     private fun setData() {
         binding.movieTitle.setTextWithBoldTitle(getString(R.string.details_movie_title),
             movie.title)
@@ -54,6 +58,11 @@ class MovieDetailsFragment : MvpAppCompatFragment(), DetailsView, BackButtonList
             movie.vote_average.toString())
         binding.movieOverview.setTextWithBoldTitle(getString(R.string.details_movie_overview),
             movie.overview ?: "")
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            binding.movieOverview.justificationMode = JUSTIFICATION_MODE_INTER_WORD
+        }
+
         Picasso
             .get()
             .load("https://image.tmdb.org/t/p/w500/${movie.poster_path}")
