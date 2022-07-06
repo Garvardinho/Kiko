@@ -1,31 +1,34 @@
 package com.garvardinho.kiko.model
 
-import com.garvardinho.kiko.model.retrofit.DataSource
-import com.garvardinho.kiko.model.retrofit.RemoteDataSource
-import retrofit2.Callback
+import com.garvardinho.kiko.model.realm.RealmDataSource
+import com.garvardinho.kiko.model.retrofit.RetrofitDataSource
+import io.reactivex.rxjava3.core.Single
 
-class RepositoryImpl(private val dataSource: DataSource) : Repository {
-    override fun loadNowPlayingMoviesFromServer(callback: Callback<MovieDTO>) {
-        dataSource.loadNowPlayingMovies(callback)
+class RepositoryImpl(
+    private val retrofitDataSource: RetrofitDataSource,
+    private val realmDataSource: RealmDataSource
+    ) : Repository {
+    override fun loadNowPlayingMoviesFromServer(): Single<MovieDTO> {
+        return retrofitDataSource.loadNowPlayingMovies()
     }
 
-    override fun loadUpcomingMoviesFromServer(callback: Callback<MovieDTO>) {
-        dataSource.loadUpcomingMovies(callback)
+    override fun loadUpcomingMoviesFromServer(): Single<MovieDTO> {
+        return retrofitDataSource.loadUpcomingMovies()
     }
 
-    override fun loadTopRatedMoviesFromServer(callback: Callback<MovieDTO>) {
-        dataSource.loadTopRatedMovies(callback)
+    override fun loadTopRatedMoviesFromServer(): Single<MovieDTO> {
+        return retrofitDataSource.loadTopRatedMovies()
     }
 
     override fun loadFavoriteMoviesFromRealm() : List<MovieResultDTO> {
-        return dataSource.loadFavoriteMovies()
+        return realmDataSource.loadFavoriteMovies()
     }
 
     override fun putMovieIntoRealm(movie: MovieResultDTO) {
-        dataSource.putMovieIntoRealm(movie)
+        realmDataSource.putMovieIntoRealm(movie)
     }
 
     override fun deleteMovieFromRealm(movie: MovieResultDTO) {
-        dataSource.deleteMovieFromRealm(movie)
+        realmDataSource.deleteMovieFromRealm(movie)
     }
 }

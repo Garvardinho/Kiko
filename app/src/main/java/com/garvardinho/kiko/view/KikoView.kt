@@ -8,5 +8,5 @@ import moxy.viewstate.strategy.alias.AddToEndSingle
 interface KikoView : MvpView {
 
     fun manageFavorite(movie: MovieResultDTO)
-    fun showError()
+    fun showError(error: String = "Check your Internet connection")
 }

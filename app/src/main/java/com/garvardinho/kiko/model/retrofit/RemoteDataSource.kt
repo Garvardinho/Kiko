@@ -2,42 +2,36 @@ package com.garvardinho.kiko.model.retrofit
 
 import com.garvardinho.kiko.model.MovieDTO
 import com.google.gson.GsonBuilder
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Callback
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 const val BASE_URL = "https://api.themoviedb.org/3/movie/"
 const val API_KEY = "9f9ff549c14dba55067c6fecad30cd71"
 
-class RemoteDataSource : DataSource {
+class RemoteDataSource : RetrofitDataSource {
     private val movieAPI = Retrofit.Builder()
         .baseUrl(BASE_URL)
+        .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
         .addConverterFactory(
             GsonConverterFactory.create(
                 GsonBuilder().setLenient().create()
             )
         )
-        .client(createOkHttpClient())
         .build()
         .create(MovieAPI::class.java)
 
-    private fun createOkHttpClient(): OkHttpClient {
-        return OkHttpClient.Builder()
-            .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
-            .build()
+    override fun loadNowPlayingMovies(): Single<MovieDTO> {
+        return movieAPI.loadNowPlayingMovies(API_KEY, 1).subscribeOn(Schedulers.io())
     }
 
-    override fun loadNowPlayingMovies(callback: Callback<MovieDTO>) {
-        movieAPI.loadNowPlayingMovies(API_KEY, 1).enqueue(callback)
+    override fun loadUpcomingMovies(): Single<MovieDTO> {
+        return movieAPI.loadUpcomingMovies(API_KEY, 1).subscribeOn(Schedulers.io())
     }
 
-    override fun loadUpcomingMovies(callback: Callback<MovieDTO>) {
-        movieAPI.loadUpcomingMovies(API_KEY, 1).enqueue(callback)
-    }
-
-    override fun loadTopRatedMovies(callback: Callback<MovieDTO>) {
-        movieAPI.loadTopRatedMovies(API_KEY, 1).enqueue(callback)
+    override fun loadTopRatedMovies(): Single<MovieDTO> {
+        return movieAPI.loadTopRatedMovies(API_KEY, 1).subscribeOn(Schedulers.io())
     }
 }
