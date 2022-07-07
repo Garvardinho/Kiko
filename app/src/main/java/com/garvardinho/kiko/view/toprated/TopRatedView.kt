@@ -10,4 +10,5 @@ interface TopRatedView : KikoView, MvpView {
 
     fun showTopRatedMovies(movies: List<MovieResultDTO>)
     fun showTopRatedLoading()
+    fun filterTopRatedMovies()
 }

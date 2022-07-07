@@ -1,10 +1,12 @@
 package com.garvardinho.kiko.view.home
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
 import android.view.*
+import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.garvardinho.kiko.App
@@ -12,11 +14,15 @@ import com.garvardinho.kiko.R
 import com.garvardinho.kiko.databinding.HomeFragmentBinding
 import com.garvardinho.kiko.model.MovieResultDTO
 import com.garvardinho.kiko.presenter.home.HomeViewPresenter
-import com.garvardinho.kiko.screens.AndroidScreens
+import com.garvardinho.kiko.view.screens.AndroidScreens
 import com.garvardinho.kiko.view.BackButtonListener
 import com.garvardinho.kiko.view.KOnItemClickListener
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
+
+const val SORT_BY_RATING: Int = 0
+const val SORT_BY_DATE: Int = 1
+const val SORT_BY_TITLE: Int = 2
 
 class HomeFragment : MvpAppCompatFragment(), HomeView, BackButtonListener {
 
@@ -38,6 +44,38 @@ class HomeFragment : MvpAppCompatFragment(), HomeView, BackButtonListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().actionBar?.setDisplayHomeAsUpEnabled(false)
+        setFilters()
+    }
+
+    private fun setFilters() {
+        binding.nowPlayingFilter.setOnClickListener { filterImage ->
+            val popupMenu = PopupMenu(requireContext(), filterImage)
+            popupMenu.inflate(R.menu.movie_filter)
+            popupMenu.setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.by_rating -> presenter.filterNowPlayingMovies(SORT_BY_RATING)
+                    R.id.by_date -> presenter.filterNowPlayingMovies(SORT_BY_DATE)
+                    R.id.by_title -> presenter.filterNowPlayingMovies(SORT_BY_TITLE)
+                }
+
+                true
+            }
+            popupMenu.show()
+        }
+
+        binding.upcomingFilter.setOnClickListener { filterImage ->
+            val popupMenu = PopupMenu(requireContext(), filterImage)
+            popupMenu.inflate(R.menu.upcoming_filter)
+            popupMenu.setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.by_date -> presenter.filterUpcomingMovies(SORT_BY_DATE)
+                    R.id.by_title -> presenter.filterUpcomingMovies(SORT_BY_TITLE)
+                }
+
+                true
+            }
+            popupMenu.show()
+        }
     }
 
     private fun setNowPlayingMoviesData() {
@@ -121,6 +159,10 @@ class HomeFragment : MvpAppCompatFragment(), HomeView, BackButtonListener {
             true -> View.GONE
             false -> View.VISIBLE
         }
+        binding.nowPlayingFilter.visibility = when (loading) {
+            true -> View.GONE
+            false -> View.VISIBLE
+        }
     }
 
     override fun showUpcomingLoading(loading: Boolean) {
@@ -132,6 +174,20 @@ class HomeFragment : MvpAppCompatFragment(), HomeView, BackButtonListener {
             true -> View.GONE
             false -> View.VISIBLE
         }
+        binding.upcomingFilter.visibility = when (loading) {
+            true -> View.GONE
+            false -> View.VISIBLE
+        }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    override fun filterNowPlayingMovies() {
+        binding.nowPlayingView.adapter?.notifyDataSetChanged()
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    override fun filterUpcomingMovies() {
+        binding.upcomingView.adapter?.notifyDataSetChanged()
     }
 
     override fun showError(error: String) {

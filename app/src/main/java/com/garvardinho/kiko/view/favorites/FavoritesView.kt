@@ -9,4 +9,5 @@ import moxy.viewstate.strategy.alias.AddToEndSingle
 interface FavoritesView : KikoView, MvpView {
 
     fun showFavoriteMovies(movies: List<MovieResultDTO>)
+    fun filterFavoriteMovies()
 }

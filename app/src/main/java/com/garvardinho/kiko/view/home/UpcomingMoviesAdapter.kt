@@ -1,5 +1,8 @@
 package com.garvardinho.kiko.view.home
 
+import android.annotation.SuppressLint
+import android.os.Build
+import android.text.Layout
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
@@ -76,8 +79,12 @@ class UpcomingMoviesAdapter(private val presenter: CardViewPresenter) :
             }
         }
 
+        @SuppressLint("WrongConstant")
         override fun setTitle(title: String) {
             cardView.upcomingMovieTitle.text = title
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                cardView.upcomingMovieTitle.justificationMode = Layout.JUSTIFICATION_MODE_INTER_WORD
+            }
         }
 
         override fun setDate(date: String) {
