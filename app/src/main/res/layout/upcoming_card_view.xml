@@ -32,7 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:maxLines="3"
+            android:lines="2"
             android:textAppearance="?attr/textAppearanceSubtitle2"
             app:layout_constraintTop_toBottomOf="@+id/upcoming_movie_image"
             tools:text="Movie that makes you cry" />

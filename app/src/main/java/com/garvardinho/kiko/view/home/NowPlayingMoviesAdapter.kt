@@ -1,8 +1,5 @@
 package com.garvardinho.kiko.view.home
 
-import android.annotation.SuppressLint
-import android.os.Build
-import android.text.Layout.JUSTIFICATION_MODE_INTER_WORD
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
@@ -79,12 +76,8 @@ class NowPlayingMoviesAdapter(private val presenter: CardViewPresenter) :
             }
         }
 
-        @SuppressLint("WrongConstant")
         override fun setTitle(title: String) {
             cardView.movieTitle.text = title
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                cardView.movieTitle.justificationMode = JUSTIFICATION_MODE_INTER_WORD
-            }
         }
 
         override fun setDate(date: String) {

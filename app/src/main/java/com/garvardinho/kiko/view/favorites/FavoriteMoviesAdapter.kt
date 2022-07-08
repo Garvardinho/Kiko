@@ -1,5 +1,8 @@
 package com.garvardinho.kiko.view.favorites
 
+import android.annotation.SuppressLint
+import android.os.Build
+import android.text.Layout.JUSTIFICATION_MODE_INTER_WORD
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
@@ -98,14 +101,19 @@ class FavoriteMoviesAdapter(private val presenter: CardViewPresenter)
             )
         }
 
+        @SuppressLint("WrongConstant")
         override fun setOverview(overview: String) {
             cardView.movieOverview.setTextWithBoldTitle(
                 cardView.root.context.getString(R.string.details_movie_overview),
                 cardView.root.context.getString(
                     R.string.overview_short,
-                    overview.substring(0, overview.indexOf(' ', 120))
+                    overview.substring(0, overview.indexOf(' ', 90))
                 )
             )
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                cardView.movieOverview.justificationMode = JUSTIFICATION_MODE_INTER_WORD
+            }
         }
     }
 }
