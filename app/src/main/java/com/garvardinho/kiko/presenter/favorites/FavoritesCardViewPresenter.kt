@@ -3,6 +3,9 @@ package com.garvardinho.kiko.presenter.favorites
 import com.garvardinho.kiko.model.MovieResultDTO
 import com.garvardinho.kiko.presenter.CardViewPresenter
 import com.garvardinho.kiko.view.KikoCardView
+import com.garvardinho.kiko.view.home.SORT_BY_DATE
+import com.garvardinho.kiko.view.home.SORT_BY_RATING
+import com.garvardinho.kiko.view.home.SORT_BY_TITLE
 
 class FavoritesCardViewPresenter : CardViewPresenter {
 
@@ -19,6 +22,26 @@ class FavoritesCardViewPresenter : CardViewPresenter {
     }
 
     override fun getCount(): Int = movies.size
+
+    override fun sort(by: Int) {
+        when (by) {
+            SORT_BY_RATING -> {
+                movies.sortBy { movie ->
+                    -movie.vote_average
+                }
+            }
+            SORT_BY_DATE -> {
+                movies.sortBy { movie ->
+                    movie.release_date
+                }
+            }
+            SORT_BY_TITLE -> {
+                movies.sortBy { movie ->
+                    movie.title
+                }
+            }
+        }
+    }
 
     override fun setMovies(movies: List<MovieResultDTO>) {
         this.movies.addAll(movies)

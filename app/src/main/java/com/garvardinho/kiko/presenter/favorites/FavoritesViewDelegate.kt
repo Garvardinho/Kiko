@@ -5,4 +5,5 @@ import com.garvardinho.kiko.presenter.ViewDelegate
 interface FavoritesViewDelegate : ViewDelegate {
 
     fun loadFavoriteMovies()
+    fun filterFavoriteMovies(by: Int)
 }

@@ -46,6 +46,11 @@ class TopRatedViewPresenter(private val router: Router) : MvpPresenter<TopRatedV
                 })
     }
 
+    override fun filterTopRatedMovies(by: Int) {
+        topRatedCardViewPresenter.sort(by)
+        viewState.filterTopRatedMovies()
+    }
+
     override fun manageFavorite(movie: MovieResultDTO) {
         if (movie.isFavorite) {
             repository.putMovieIntoRealm(movie)

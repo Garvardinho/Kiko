@@ -13,29 +13,34 @@
         android:indeterminate="true"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/top_rated"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="@string/top_rated"
+        android:textAppearance="?attr/textAppearanceHeadline5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/loading_indicator" />
 
-    <LinearLayout
-        android:id="@+id/ratings_fragment_content"
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/top_rated_filter"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_filter"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/ratings_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@+id/loading_indicator">
-
-        <TextView
-            android:id="@+id/top_rated"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/top_rated"
-            android:layout_margin="8dp"
-            android:textAppearance="?attr/textAppearanceHeadline5" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/ratings_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/top_rated_card_view" />
-    </LinearLayout>
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintTop_toBottomOf="@+id/top_rated"
+        android:paddingBottom="40dp"
+        tools:listitem="@layout/top_rated_card_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

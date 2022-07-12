@@ -15,4 +15,7 @@
     <string name="details_movie_overview">Description:</string>
     <string name="overview_short">%s…</string>
     <string name="empty_moves_list">You haven\'t added any</string>
+    <string name="by_rating">By rating</string>
+    <string name="by_date">By date</string>
+    <string name="by_title">By title</string>
 </resources>

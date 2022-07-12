@@ -5,7 +5,7 @@ import android.view.MenuItem
 import com.garvardinho.kiko.App
 import com.garvardinho.kiko.R
 import com.garvardinho.kiko.databinding.MainActivityBinding
-import com.garvardinho.kiko.screens.AndroidScreens
+import com.garvardinho.kiko.view.screens.AndroidScreens
 import com.garvardinho.kiko.view.home.HomeFragment
 import com.github.terrakok.cicerone.androidx.AppNavigator
 import com.google.android.material.navigation.NavigationBarView

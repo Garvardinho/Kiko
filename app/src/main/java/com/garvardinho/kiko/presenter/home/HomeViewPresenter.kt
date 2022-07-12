@@ -74,6 +74,16 @@ class HomeViewPresenter(private val router: Router) : MvpPresenter<HomeView>(), 
             })
     }
 
+    override fun filterNowPlayingMovies(by: Int) {
+        nowPlayingCardViewPresenter.sort(by)
+        viewState.filterNowPlayingMovies()
+    }
+
+    override fun filterUpcomingMovies(by: Int) {
+        upcomingCardViewPresenter.sort(by)
+        viewState.filterUpcomingMovies()
+    }
+
     override fun manageFavorite(movie: MovieResultDTO) {
         if (movie.isFavorite) {
             repository.putMovieIntoRealm(movie)

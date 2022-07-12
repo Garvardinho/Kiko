@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/by_rating"
+        android:title="@string/by_rating"
+        app:actionViewClass="android.widget.CheckedTextView" />
+
+    <item
+        android:id="@+id/by_date"
+        android:title="@string/by_date"
+        app:actionViewClass="android.widget.CheckedTextView" />
+
+    <item
+        android:id="@+id/by_title"
+        android:title="@string/by_title"
+        app:actionViewClass="android.widget.CheckedTextView" />
+</menu>

@@ -12,4 +12,6 @@ interface HomeView : KikoView, MvpView {
     fun showUpcomingMovies(movies: List<MovieResultDTO>)
     fun showNowPlayingLoading(loading: Boolean)
     fun showUpcomingLoading(loading: Boolean)
+    fun filterNowPlayingMovies()
+    fun filterUpcomingMovies()
 }

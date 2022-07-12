@@ -1,4 +1,4 @@
-package com.garvardinho.kiko.screens
+package com.garvardinho.kiko.view.screens
 
 import com.garvardinho.kiko.model.MovieResultDTO
 import com.github.terrakok.cicerone.Screen

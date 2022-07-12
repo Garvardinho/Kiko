@@ -6,4 +6,6 @@ interface HomeViewDelegate : ViewDelegate {
 
     fun loadNowPlayingMovies()
     fun loadUpcomingMovies()
+    fun filterNowPlayingMovies(by: Int)
+    fun filterUpcomingMovies(by: Int)
 }
