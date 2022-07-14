@@ -1,16 +1,15 @@
 package com.garvardinho.kiko.model.realm
 
-import com.garvardinho.kiko.model.MovieResultDTO
-import com.garvardinho.kiko.model.MovieResultDTOManaged
+import com.garvardinho.kiko.model.retrofit.MovieDTO
 import io.realm.Realm
 import io.realm.kotlin.where
 
 class RealmDataSource : IRealmDataSource {
     private val realm = Realm.getDefaultInstance()
 
-    override fun loadFavoriteMovies(): List<MovieResultDTO> {
-        val resultsRealm = realm.where<MovieResultDTOManaged>().findAll()
-        val results = ArrayList<MovieResultDTO>()
+    override fun loadFavoriteMovies(): List<MovieDTO> {
+        val resultsRealm = realm.where<RealmMovieDTO>().findAll()
+        val results = ArrayList<MovieDTO>()
 
         for (movie in resultsRealm) {
             results.add(movie.toMovieResultDTO())
@@ -19,15 +18,15 @@ class RealmDataSource : IRealmDataSource {
         return results
     }
 
-    override fun putMovieIntoRealm(movie: MovieResultDTO) {
+    override fun putMovieIntoRealm(movie: MovieDTO) {
         realm.executeTransaction { transaction ->
             transaction.insert(movie.toManaged())
         }
     }
 
-    override fun deleteMovieFromRealm(movie: MovieResultDTO) {
+    override fun deleteMovieFromRealm(movie: MovieDTO) {
         realm.executeTransaction {
-            realm.where<MovieResultDTOManaged>()
+            realm.where<RealmMovieDTO>()
                 .equalTo("title", movie.title).findFirst()!!.deleteFromRealm()
         }
     }

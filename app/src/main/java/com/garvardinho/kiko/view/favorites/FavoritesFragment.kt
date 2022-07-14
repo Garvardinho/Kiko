@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.garvardinho.kiko.App
 import com.garvardinho.kiko.R
 import com.garvardinho.kiko.databinding.FragmentFavoritesBinding
-import com.garvardinho.kiko.model.MovieResultDTO
+import com.garvardinho.kiko.model.retrofit.MovieDTO
 import com.garvardinho.kiko.presenter.favorites.FavoritesViewPresenter
 import com.garvardinho.kiko.view.screens.AndroidScreens
 import com.garvardinho.kiko.view.BackButtonListener
@@ -58,7 +58,7 @@ class FavoritesFragment : MvpAppCompatFragment(), FavoritesView, BackButtonListe
         }
     }
 
-    override fun showFavoriteMovies(movies: List<MovieResultDTO>) {
+    override fun showFavoriteMovies(movies: List<MovieDTO>) {
         binding.loadingIndicator.visibility = View.GONE
         binding.favoritesView.visibility = View.VISIBLE
         if (movies.isEmpty()) {
@@ -100,7 +100,7 @@ class FavoritesFragment : MvpAppCompatFragment(), FavoritesView, BackButtonListe
             }.show()
     }
 
-    override fun manageFavorite(movie: MovieResultDTO) {
+    override fun manageFavorite(movie: MovieDTO) {
         presenter.manageFavorite(movie)
     }
 

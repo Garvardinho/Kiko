@@ -6,7 +6,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.RecyclerView
 import com.garvardinho.kiko.R
 import com.garvardinho.kiko.databinding.NowPlayingCardViewBinding
-import com.garvardinho.kiko.model.MovieResultDTO
+import com.garvardinho.kiko.model.retrofit.MovieDTO
 import com.garvardinho.kiko.presenter.CardViewPresenter
 import com.garvardinho.kiko.view.KikoCardView
 import com.garvardinho.kiko.setFavoriteImage
@@ -67,7 +67,7 @@ class NowPlayingMoviesAdapter(private val presenter: CardViewPresenter) :
                 .into(cardView.movieImage)
         }
 
-        override fun setFavorite(movie: MovieResultDTO) {
+        override fun setFavorite(movie: MovieDTO) {
             cardView.buttonFavorite.setFavoriteImage(movie.isFavorite)
             cardView.buttonFavorite.setOnClickListener {
                 movie.isFavorite = !movie.isFavorite

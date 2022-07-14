@@ -1,12 +1,12 @@
 package com.garvardinho.kiko.model.realm
 
-import com.garvardinho.kiko.model.MovieResultDTO
+import com.garvardinho.kiko.model.retrofit.MovieDTO
 
 interface IRealmDataSource {
 
-    fun putMovieIntoRealm(movie: MovieResultDTO)
-    fun deleteMovieFromRealm(movie: MovieResultDTO)
-    fun loadFavoriteMovies(): List<MovieResultDTO> {
+    fun putMovieIntoRealm(movie: MovieDTO)
+    fun deleteMovieFromRealm(movie: MovieDTO)
+    fun loadFavoriteMovies(): List<MovieDTO> {
         return listOf()
     }
 }

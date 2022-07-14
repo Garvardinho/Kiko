@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.garvardinho.kiko.App
 import com.garvardinho.kiko.R
 import com.garvardinho.kiko.databinding.FragmentTopRatedBinding
-import com.garvardinho.kiko.model.MovieResultDTO
+import com.garvardinho.kiko.model.retrofit.MovieDTO
 import com.garvardinho.kiko.presenter.toprated.TopRatedViewPresenter
 import com.garvardinho.kiko.view.screens.AndroidScreens
 import com.garvardinho.kiko.view.BackButtonListener
@@ -57,7 +57,7 @@ class TopRatedFragment : MvpAppCompatFragment(), TopRatedView, BackButtonListene
         }
     }
 
-    override fun showTopRatedMovies(movies: List<MovieResultDTO>) {
+    override fun showTopRatedMovies(movies: List<MovieDTO>) {
         binding.topRated.visibility = VISIBLE
         binding.ratingsView.visibility = VISIBLE
         binding.topRatedFilter.visibility = VISIBLE
@@ -103,7 +103,7 @@ class TopRatedFragment : MvpAppCompatFragment(), TopRatedView, BackButtonListene
             }.show()
     }
 
-    override fun manageFavorite(movie: MovieResultDTO) {
+    override fun manageFavorite(movie: MovieDTO) {
         presenter.manageFavorite(movie)
     }
 
