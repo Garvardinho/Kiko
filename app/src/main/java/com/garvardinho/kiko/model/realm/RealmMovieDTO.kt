@@ -1,8 +1,9 @@
-package com.garvardinho.kiko.model
+package com.garvardinho.kiko.model.realm
 
+import com.garvardinho.kiko.model.retrofit.MovieDTO
 import io.realm.RealmObject
 
-open class MovieResultDTOManaged (
+open class RealmMovieDTO (
     var title: String? = null,
     var poster_path: String? = null,
     var release_date: String? = null,
@@ -10,8 +11,8 @@ open class MovieResultDTOManaged (
     var isFavorite: Boolean? = null,
     var overview: String? = null,
 ) : RealmObject() {
-    fun toMovieResultDTO() : MovieResultDTO {
-        return MovieResultDTO(
+    fun toMovieResultDTO() : MovieDTO {
+        return MovieDTO(
             title ?: "New movie",
             poster_path,
             release_date,

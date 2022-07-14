@@ -1,6 +1,6 @@
 package com.garvardinho.kiko.presenter.home
 
-import com.garvardinho.kiko.model.MovieResultDTO
+import com.garvardinho.kiko.model.retrofit.MovieDTO
 import com.garvardinho.kiko.presenter.CardViewPresenter
 import com.garvardinho.kiko.view.KikoCardView
 import com.garvardinho.kiko.view.home.SORT_BY_DATE
@@ -8,7 +8,7 @@ import com.garvardinho.kiko.view.home.SORT_BY_TITLE
 
 class UpcomingCardViewPresenter : CardViewPresenter {
 
-    private val movies = mutableListOf<MovieResultDTO>()
+    private val movies = mutableListOf<MovieDTO>()
 
     override fun bindView(view: KikoCardView) {
         val movie = movies[view.pos]
@@ -35,9 +35,9 @@ class UpcomingCardViewPresenter : CardViewPresenter {
         }
     }
 
-    override fun setMovies(movies: List<MovieResultDTO>) {
+    override fun setMovies(movies: List<MovieDTO>) {
         this.movies.addAll(movies)
     }
 
-    override fun getMovie(position: Int): MovieResultDTO = movies[position]
+    override fun getMovie(position: Int): MovieDTO = movies[position]
 }

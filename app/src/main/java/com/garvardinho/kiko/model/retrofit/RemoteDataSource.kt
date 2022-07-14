@@ -1,6 +1,5 @@
 package com.garvardinho.kiko.model.retrofit
 
-import com.garvardinho.kiko.model.MovieDTO
 import com.google.gson.GsonBuilder
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -23,15 +22,15 @@ class RemoteDataSource : RetrofitDataSource {
         .build()
         .create(MovieAPI::class.java)
 
-    override fun loadNowPlayingMovies(): Single<MovieDTO> {
+    override fun loadNowPlayingMovies(): Single<MovieListDTO> {
         return movieAPI.loadNowPlayingMovies(API_KEY, 1).subscribeOn(Schedulers.io())
     }
 
-    override fun loadUpcomingMovies(): Single<MovieDTO> {
+    override fun loadUpcomingMovies(): Single<MovieListDTO> {
         return movieAPI.loadUpcomingMovies(API_KEY, 1).subscribeOn(Schedulers.io())
     }
 
-    override fun loadTopRatedMovies(): Single<MovieDTO> {
+    override fun loadTopRatedMovies(): Single<MovieListDTO> {
         return movieAPI.loadTopRatedMovies(API_KEY, 1).subscribeOn(Schedulers.io())
     }
 }

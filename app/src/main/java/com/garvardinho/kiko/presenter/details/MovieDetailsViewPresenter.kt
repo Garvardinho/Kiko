@@ -1,6 +1,6 @@
 package com.garvardinho.kiko.presenter.details
 
-import com.garvardinho.kiko.model.MovieResultDTO
+import com.garvardinho.kiko.model.retrofit.MovieDTO
 import com.garvardinho.kiko.model.Repository
 import com.garvardinho.kiko.model.RepositoryImpl
 import com.garvardinho.kiko.model.realm.RealmDataSource
@@ -14,7 +14,7 @@ class MovieDetailsViewPresenter(private val router: Router) : MvpPresenter<Detai
 
     private val repositoryRealm: Repository = RepositoryImpl(RemoteDataSource(), RealmDataSource())
 
-    override fun manageFavorite(movie: MovieResultDTO) {
+    override fun manageFavorite(movie: MovieDTO) {
         if (movie.isFavorite) {
             repositoryRealm.putMovieIntoRealm(movie)
         } else {

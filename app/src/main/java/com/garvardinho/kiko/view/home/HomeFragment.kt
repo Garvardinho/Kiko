@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.garvardinho.kiko.App
 import com.garvardinho.kiko.R
 import com.garvardinho.kiko.databinding.HomeFragmentBinding
-import com.garvardinho.kiko.model.MovieResultDTO
+import com.garvardinho.kiko.model.retrofit.MovieDTO
 import com.garvardinho.kiko.presenter.home.HomeViewPresenter
 import com.garvardinho.kiko.view.screens.AndroidScreens
 import com.garvardinho.kiko.view.BackButtonListener
@@ -140,12 +140,12 @@ class HomeFragment : MvpAppCompatFragment(), HomeView, BackButtonListener {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-    override fun showNowPlayingMovies(movies: List<MovieResultDTO>) {
+    override fun showNowPlayingMovies(movies: List<MovieDTO>) {
         showNowPlayingLoading(false)
         setNowPlayingMoviesData()
     }
 
-    override fun showUpcomingMovies(movies: List<MovieResultDTO>) {
+    override fun showUpcomingMovies(movies: List<MovieDTO>) {
         showUpcomingLoading(false)
         setUpcomingMoviesData()
     }
@@ -200,7 +200,7 @@ class HomeFragment : MvpAppCompatFragment(), HomeView, BackButtonListener {
             }.show()
     }
 
-    override fun manageFavorite(movie: MovieResultDTO) {
+    override fun manageFavorite(movie: MovieDTO) {
         presenter.manageFavorite(movie)
     }
 

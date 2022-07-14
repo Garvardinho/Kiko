@@ -1,9 +1,9 @@
 package com.garvardinho.kiko.presenter
 
-import com.garvardinho.kiko.model.MovieResultDTO
+import com.garvardinho.kiko.model.retrofit.MovieDTO
 
 interface ViewDelegate {
 
     fun onBackPressed(): Boolean
-    fun manageFavorite(movie: MovieResultDTO)
+    fun manageFavorite(movie: MovieDTO)
 }

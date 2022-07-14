@@ -1,13 +1,10 @@
-package com.garvardinho.kiko.model
+package com.garvardinho.kiko.model.retrofit
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.garvardinho.kiko.model.realm.RealmMovieDTO
 
 data class MovieDTO(
-    val results: List<MovieResultDTO>,
-)
-
-data class MovieResultDTO(
     val title: String = "New movie",
     val poster_path: String?,
     val release_date: String?,
@@ -38,18 +35,18 @@ data class MovieResultDTO(
         }
     }
 
-    companion object CREATOR : Parcelable.Creator<MovieResultDTO> {
-        override fun createFromParcel(parcel: Parcel): MovieResultDTO {
-            return MovieResultDTO(parcel)
+    companion object CREATOR : Parcelable.Creator<MovieDTO> {
+        override fun createFromParcel(parcel: Parcel): MovieDTO {
+            return MovieDTO(parcel)
         }
 
-        override fun newArray(size: Int): Array<MovieResultDTO?> {
+        override fun newArray(size: Int): Array<MovieDTO?> {
             return arrayOfNulls(size)
         }
     }
 
-    fun toManaged(): MovieResultDTOManaged {
-        return MovieResultDTOManaged(
+    fun toManaged(): RealmMovieDTO {
+        return RealmMovieDTO(
             title,
             poster_path,
             release_date,

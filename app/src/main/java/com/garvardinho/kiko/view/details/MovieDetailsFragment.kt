@@ -8,7 +8,7 @@ import android.view.*
 import com.garvardinho.kiko.App
 import com.garvardinho.kiko.R
 import com.garvardinho.kiko.databinding.FragmentMovieDetailsBinding
-import com.garvardinho.kiko.model.MovieResultDTO
+import com.garvardinho.kiko.model.retrofit.MovieDTO
 import com.garvardinho.kiko.presenter.details.MovieDetailsViewPresenter
 import com.garvardinho.kiko.setFavoriteImage
 import com.garvardinho.kiko.setTextWithBoldTitle
@@ -21,7 +21,7 @@ private const val MOVIE = "MovieDetailsFragment.Movie"
 
 class MovieDetailsFragment : MvpAppCompatFragment(), DetailsView, BackButtonListener {
 
-    private var _movieDTO: MovieResultDTO? = null
+    private var _movieDTO: MovieDTO? = null
     private val movie get() = _movieDTO!!
     private var _binding: FragmentMovieDetailsBinding? = null
     private val binding get() = _binding!!
@@ -99,7 +99,7 @@ class MovieDetailsFragment : MvpAppCompatFragment(), DetailsView, BackButtonList
 
     companion object {
         @JvmStatic
-        fun newInstance(movieDTO: MovieResultDTO) =
+        fun newInstance(movieDTO: MovieDTO) =
             MovieDetailsFragment().apply {
                 arguments = Bundle().apply {
                     putParcelable(MOVIE, movieDTO)

@@ -1,6 +1,6 @@
 package com.garvardinho.kiko.view.screens
 
-import com.garvardinho.kiko.model.MovieResultDTO
+import com.garvardinho.kiko.model.retrofit.MovieDTO
 import com.garvardinho.kiko.view.details.MovieDetailsFragment
 import com.garvardinho.kiko.view.favorites.FavoritesFragment
 import com.garvardinho.kiko.view.home.HomeFragment
@@ -22,7 +22,7 @@ object AndroidScreens : KikoScreens {
         return FragmentScreen { TopRatedFragment() }
     }
 
-    override fun detailsScreen(movie: MovieResultDTO): Screen {
+    override fun detailsScreen(movie: MovieDTO): Screen {
         return FragmentScreen { MovieDetailsFragment.newInstance(movie) }
     }
 }
