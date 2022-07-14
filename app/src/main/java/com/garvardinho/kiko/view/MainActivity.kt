@@ -5,10 +5,13 @@ import android.view.MenuItem
 import com.garvardinho.kiko.App
 import com.garvardinho.kiko.R
 import com.garvardinho.kiko.databinding.MainActivityBinding
-import com.garvardinho.kiko.screens.AndroidScreens
+import com.garvardinho.kiko.model.room.AppDatabase
+import com.garvardinho.kiko.view.screens.AndroidScreens
 import com.garvardinho.kiko.view.home.HomeFragment
 import com.github.terrakok.cicerone.androidx.AppNavigator
 import com.google.android.material.navigation.NavigationBarView
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import moxy.MvpAppCompatActivity

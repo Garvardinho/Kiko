@@ -1,11 +1,14 @@
 package com.garvardinho.kiko.view.details
 
+import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
+import android.text.Layout.JUSTIFICATION_MODE_INTER_WORD
 import android.view.*
 import com.garvardinho.kiko.App
 import com.garvardinho.kiko.R
 import com.garvardinho.kiko.databinding.FragmentMovieDetailsBinding
-import com.garvardinho.kiko.model.MovieResultDTO
+import com.garvardinho.kiko.model.retrofit.MovieDTO
 import com.garvardinho.kiko.presenter.details.MovieDetailsViewPresenter
 import com.garvardinho.kiko.setFavoriteImage
 import com.garvardinho.kiko.setTextWithBoldTitle
@@ -18,7 +21,7 @@ private const val MOVIE = "MovieDetailsFragment.Movie"
 
 class MovieDetailsFragment : MvpAppCompatFragment(), DetailsView, BackButtonListener {
 
-    private var _movieDTO: MovieResultDTO? = null
+    private var _movieDTO: MovieDTO? = null
     private val movie get() = _movieDTO!!
     private var _binding: FragmentMovieDetailsBinding? = null
     private val binding get() = _binding!!
@@ -46,6 +49,7 @@ class MovieDetailsFragment : MvpAppCompatFragment(), DetailsView, BackButtonList
         setData()
     }
 
+    @SuppressLint("WrongConstant")
     private fun setData() {
         binding.movieTitle.setTextWithBoldTitle(getString(R.string.details_movie_title),
             movie.title)
@@ -54,9 +58,14 @@ class MovieDetailsFragment : MvpAppCompatFragment(), DetailsView, BackButtonList
             movie.vote_average.toString())
         binding.movieOverview.setTextWithBoldTitle(getString(R.string.details_movie_overview),
             movie.overview ?: "")
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            binding.movieOverview.justificationMode = JUSTIFICATION_MODE_INTER_WORD
+        }
+
         Picasso
             .get()
-            .load("https://www.themoviedb.org/t/p/original/${movie.poster_path}")
+            .load("https://image.tmdb.org/t/p/w500/${movie.poster_path}")
             .into(binding.movieImage)
         binding.buttonFavorite.setFavoriteImage(movie.isFavorite)
 
@@ -90,7 +99,7 @@ class MovieDetailsFragment : MvpAppCompatFragment(), DetailsView, BackButtonList
 
     companion object {
         @JvmStatic
-        fun newInstance(movieDTO: MovieResultDTO) =
+        fun newInstance(movieDTO: MovieDTO) =
             MovieDetailsFragment().apply {
                 arguments = Bundle().apply {
                     putParcelable(MOVIE, movieDTO)

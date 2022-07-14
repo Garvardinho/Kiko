@@ -2,4 +2,6 @@ package com.garvardinho.kiko.presenter
 
 import com.garvardinho.kiko.view.KikoCardView
 
-interface CardViewPresenter : RecyclerViewPresenter<KikoCardView>
+interface CardViewPresenter : RecyclerViewPresenter<KikoCardView> {
+    fun sort(by: Int)
+}

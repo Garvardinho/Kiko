@@ -1,22 +1,18 @@
 package com.garvardinho.kiko.presenter.home
 
-import com.garvardinho.kiko.model.MovieDTO
-import com.garvardinho.kiko.model.MovieResultDTO
 import com.garvardinho.kiko.model.Repository
 import com.garvardinho.kiko.model.RepositoryImpl
-import com.garvardinho.kiko.model.retrofit.RealmDataSource
+import com.garvardinho.kiko.model.realm.RealmDataSource
+import com.garvardinho.kiko.model.retrofit.MovieDTO
 import com.garvardinho.kiko.model.retrofit.RemoteDataSource
 import com.garvardinho.kiko.view.home.HomeView
 import com.github.terrakok.cicerone.Router
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import moxy.MvpPresenter
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class HomeViewPresenter(private val router: Router) : MvpPresenter<HomeView>(), HomeViewDelegate {
 
-    private val repositoryRemote: Repository = RepositoryImpl(RemoteDataSource())
-    private val repositoryRealm: Repository = RepositoryImpl(RealmDataSource())
+    private val repository: Repository = RepositoryImpl(RemoteDataSource(), RealmDataSource())
     val nowPlayingCardViewPresenter = NowPlayingCardViewPresenter()
     val upcomingCardViewPresenter = UpcomingCardViewPresenter()
 
@@ -29,61 +25,103 @@ class HomeViewPresenter(private val router: Router) : MvpPresenter<HomeView>(), 
 
     override fun loadNowPlayingMovies() {
         viewState.showNowPlayingLoading(true)
-        repositoryRemote.loadNowPlayingMoviesFromServer(object : Callback<MovieDTO> {
-            override fun onResponse(call: Call<MovieDTO>, response: Response<MovieDTO>) {
-                if (response.body() == null || response.body()?.results == null) {
-                    viewState.showError()
+        repository.loadNowPlayingMoviesFromCache()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { cache ->
+                if (cache.isEmpty()) {
+                    repository.loadNowPlayingMoviesFromServer()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                            { moviesList ->
+                                if (moviesList.results.isEmpty()) {
+                                    viewState.showError()
+                                } else {
+                                    val favorites = repository.loadFavoriteMoviesFromRealm()
+                                    for (favoriteMovie in favorites) {
+                                        moviesList.results.find { movie ->
+                                            movie.title == favoriteMovie.title
+                                        }?.isFavorite = true
+                                    }
+                                    nowPlayingCardViewPresenter.setMovies(moviesList.results)
+                                    viewState.showNowPlayingMovies(moviesList.results)
+                                    repository.cacheNowPlayingMovies(moviesList.results)
+                                }
+                            },
+                            {
+                                viewState.showError()
+                            })
                 } else {
-                    response.body()?.results?.let { moviesList ->
-                        val favorites = repositoryRealm.loadFavoriteMoviesFromRealm()
-                        for (favoriteMovie in favorites) {
-                            moviesList.find { movie ->
-                                movie.title == favoriteMovie.title
-                            }?.isFavorite = true
-                        }
-                        nowPlayingCardViewPresenter.setMovies(moviesList)
-                        viewState.showNowPlayingMovies(moviesList)
-                    }
+                    repository.loadNowPlayingMoviesFromCache()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                            { movieList ->
+                                nowPlayingCardViewPresenter.setMovies(movieList)
+                                viewState.showNowPlayingMovies(movieList)
+                            },
+                            {
+                                viewState.showError()
+                            })
                 }
             }
-
-            override fun onFailure(call: Call<MovieDTO>, t: Throwable) {
-                viewState.showError()
-            }
-        })
     }
 
     override fun loadUpcomingMovies() {
         viewState.showUpcomingLoading(true)
-        repositoryRemote.loadUpcomingMoviesFromServer(object : Callback<MovieDTO> {
-            override fun onResponse(call: Call<MovieDTO>, response: Response<MovieDTO>) {
-                if (response.body() == null || response.body()?.results == null) {
-                    viewState.showError()
+        repository.loadUpcomingMoviesFromCache()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { cache ->
+                if (cache.isEmpty()) {
+                    repository.loadUpcomingMoviesFromServer()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                            { moviesList ->
+                                if (moviesList.results.isEmpty()) {
+                                    viewState.showError()
+                                } else {
+                                    val favorites = repository.loadFavoriteMoviesFromRealm()
+                                    for (favoriteMovie in favorites) {
+                                        moviesList.results.find { movie ->
+                                            movie.title == favoriteMovie.title
+                                        }?.isFavorite = true
+                                    }
+                                    upcomingCardViewPresenter.setMovies(moviesList.results)
+                                    viewState.showUpcomingMovies(moviesList.results)
+                                    repository.cacheUpcomingMovies(moviesList.results)
+                                }
+                            },
+                            {
+                                viewState.showError()
+                            })
                 } else {
-                    response.body()?.results?.let { moviesList ->
-                        val favorites = repositoryRealm.loadFavoriteMoviesFromRealm()
-                        for (favoriteMovie in favorites) {
-                            moviesList.find { movie ->
-                                movie.title == favoriteMovie.title
-                            }?.isFavorite = true
-                        }
-                        upcomingCardViewPresenter.setMovies(moviesList)
-                        viewState.showUpcomingMovies(moviesList)
-                    }
+                    repository.loadUpcomingMoviesFromCache()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                            { movieList ->
+                                upcomingCardViewPresenter.setMovies(movieList)
+                                viewState.showUpcomingMovies(movieList)
+                            },
+                            {
+                                viewState.showError()
+                            })
                 }
             }
-
-            override fun onFailure(call: Call<MovieDTO>, t: Throwable) {
-                viewState.showError()
-            }
-        })
     }
 
-    override fun manageFavorite(movie: MovieResultDTO) {
+    override fun filterNowPlayingMovies(by: Int) {
+        nowPlayingCardViewPresenter.sort(by)
+        viewState.filterNowPlayingMovies()
+    }
+
+    override fun filterUpcomingMovies(by: Int) {
+        upcomingCardViewPresenter.sort(by)
+        viewState.filterUpcomingMovies()
+    }
+
+    override fun manageFavorite(movie: MovieDTO) {
         if (movie.isFavorite) {
-            repositoryRealm.putMovieIntoRealm(movie)
+            repository.putMovieIntoRealm(movie)
         } else {
-            repositoryRealm.deleteMovieFromRealm(movie)
+            repository.deleteMovieFromRealm(movie)
         }
     }
 

@@ -6,7 +6,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.RecyclerView
 import com.garvardinho.kiko.R
 import com.garvardinho.kiko.databinding.UpcomingCardViewBinding
-import com.garvardinho.kiko.model.MovieResultDTO
+import com.garvardinho.kiko.model.retrofit.MovieDTO
 import com.garvardinho.kiko.presenter.CardViewPresenter
 import com.garvardinho.kiko.view.KikoCardView
 import com.garvardinho.kiko.setFavoriteImage
@@ -60,14 +60,14 @@ class UpcomingMoviesAdapter(private val presenter: CardViewPresenter) :
 
             Picasso
                 .get()
-                .load("https://www.themoviedb.org/t/p/original/$url")
+                .load("https://image.tmdb.org/t/p/w500/$url")
                 .resize(imageWidth, imageHeight)
                 .placeholder(AppCompatResources.getDrawable(cardView.root.context,
                     R.drawable.ic_film)!!)
                 .into(cardView.upcomingMovieImage)
         }
 
-        override fun setFavorite(movie: MovieResultDTO) {
+        override fun setFavorite(movie: MovieDTO) {
             cardView.upcomingButtonFavorite.setFavoriteImage(movie.isFavorite)
             cardView.upcomingButtonFavorite.setOnClickListener {
                 movie.isFavorite = !movie.isFavorite

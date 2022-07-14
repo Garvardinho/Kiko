@@ -1,18 +1,24 @@
 package com.garvardinho.kiko.view.favorites
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.garvardinho.kiko.App
+import com.garvardinho.kiko.R
 import com.garvardinho.kiko.databinding.FragmentFavoritesBinding
-import com.garvardinho.kiko.model.MovieResultDTO
+import com.garvardinho.kiko.model.retrofit.MovieDTO
 import com.garvardinho.kiko.presenter.favorites.FavoritesViewPresenter
-import com.garvardinho.kiko.screens.AndroidScreens
+import com.garvardinho.kiko.view.screens.AndroidScreens
 import com.garvardinho.kiko.view.BackButtonListener
 import com.garvardinho.kiko.view.KOnItemClickListener
+import com.garvardinho.kiko.view.home.SORT_BY_DATE
+import com.garvardinho.kiko.view.home.SORT_BY_RATING
+import com.garvardinho.kiko.view.home.SORT_BY_TITLE
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 
@@ -36,9 +42,23 @@ class FavoritesFragment : MvpAppCompatFragment(), FavoritesView, BackButtonListe
         binding.loadingIndicator.visibility = View.VISIBLE
         binding.favoritesView.visibility = View.GONE
         binding.emptyData.visibility = View.GONE
+        binding.favoritesFilter.setOnClickListener { filterImage ->
+            val popupMenu = PopupMenu(requireContext(), filterImage)
+            popupMenu.inflate(R.menu.movie_filter)
+            popupMenu.setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.by_rating -> presenter.filterFavoriteMovies(SORT_BY_RATING)
+                    R.id.by_date -> presenter.filterFavoriteMovies(SORT_BY_DATE)
+                    R.id.by_title -> presenter.filterFavoriteMovies(SORT_BY_TITLE)
+                }
+
+                true
+            }
+            popupMenu.show()
+        }
     }
 
-    override fun showFavoriteMovies(movies: List<MovieResultDTO>) {
+    override fun showFavoriteMovies(movies: List<MovieDTO>) {
         binding.loadingIndicator.visibility = View.GONE
         binding.favoritesView.visibility = View.VISIBLE
         if (movies.isEmpty()) {
@@ -65,17 +85,22 @@ class FavoritesFragment : MvpAppCompatFragment(), FavoritesView, BackButtonListe
         })
     }
 
-    override fun showError() {
+    @SuppressLint("NotifyDataSetChanged")
+    override fun filterFavoriteMovies() {
+        binding.favoritesView.adapter?.notifyDataSetChanged()
+    }
+
+    override fun showError(error: String) {
         AlertDialog.Builder(requireContext())
             .setTitle("Error")
-            .setMessage("Check your Internet connection")
+            .setMessage(error)
             .setCancelable(true)
             .setPositiveButton("Got it!") { dialog, _ ->
                 dialog.cancel()
             }.show()
     }
 
-    override fun manageFavorite(movie: MovieResultDTO) {
+    override fun manageFavorite(movie: MovieDTO) {
         presenter.manageFavorite(movie)
     }
 

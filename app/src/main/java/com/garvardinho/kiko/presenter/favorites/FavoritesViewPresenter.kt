@@ -1,17 +1,17 @@
 package com.garvardinho.kiko.presenter.favorites
 
-import com.garvardinho.kiko.model.MovieResultDTO
+import com.garvardinho.kiko.model.retrofit.MovieDTO
 import com.garvardinho.kiko.model.Repository
 import com.garvardinho.kiko.model.RepositoryImpl
-import com.garvardinho.kiko.model.retrofit.RealmDataSource
+import com.garvardinho.kiko.model.realm.RealmDataSource
+import com.garvardinho.kiko.model.retrofit.RemoteDataSource
 import com.garvardinho.kiko.view.favorites.FavoritesView
 import com.github.terrakok.cicerone.Router
 import moxy.MvpPresenter
 
 class FavoritesViewPresenter(private val router: Router) : MvpPresenter<FavoritesView>(), FavoritesViewDelegate {
 
-    private val repositoryRemote: Repository = RepositoryImpl(RealmDataSource())
-    private val repositoryRealm: Repository = RepositoryImpl(RealmDataSource())
+    private val repository: Repository = RepositoryImpl(RemoteDataSource(), RealmDataSource())
     val favoritesCardViewPresenter = FavoritesCardViewPresenter()
 
     override fun onFirstViewAttach() {
@@ -21,16 +21,21 @@ class FavoritesViewPresenter(private val router: Router) : MvpPresenter<Favorite
     }
 
     override fun loadFavoriteMovies() {
-        val moviesList = repositoryRemote.loadFavoriteMoviesFromRealm()
+        val moviesList = repository.loadFavoriteMoviesFromRealm()
         favoritesCardViewPresenter.setMovies(moviesList)
         viewState.showFavoriteMovies(moviesList)
     }
 
-    override fun manageFavorite(movie: MovieResultDTO) {
+    override fun filterFavoriteMovies(by: Int) {
+        favoritesCardViewPresenter.sort(by)
+        viewState.filterFavoriteMovies()
+    }
+
+    override fun manageFavorite(movie: MovieDTO) {
         if (movie.isFavorite) {
-            repositoryRealm.putMovieIntoRealm(movie)
+            repository.putMovieIntoRealm(movie)
         } else {
-            repositoryRealm.deleteMovieFromRealm(movie)
+            repository.deleteMovieFromRealm(movie)
         }
     }
 

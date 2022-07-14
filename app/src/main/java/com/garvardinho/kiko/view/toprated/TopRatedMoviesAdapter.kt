@@ -6,7 +6,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.RecyclerView
 import com.garvardinho.kiko.R
 import com.garvardinho.kiko.databinding.TopRatedCardViewBinding
-import com.garvardinho.kiko.model.MovieResultDTO
+import com.garvardinho.kiko.model.retrofit.MovieDTO
 import com.garvardinho.kiko.presenter.CardViewPresenter
 import com.garvardinho.kiko.view.KikoCardView
 import com.garvardinho.kiko.setFavoriteImage
@@ -61,14 +61,14 @@ class TopRatedMoviesAdapter(private val presenter: CardViewPresenter) :
 
             Picasso
                 .get()
-                .load("https://www.themoviedb.org/t/p/original/$url")
+                .load("https://image.tmdb.org/t/p/w500/$url")
                 .resize(imageWidth, imageHeight)
                 .placeholder(AppCompatResources.getDrawable(cardView.root.context,
                     R.drawable.ic_film)!!)
                 .into(cardView.movieImage)
         }
 
-        override fun setFavorite(movie: MovieResultDTO) {
+        override fun setFavorite(movie: MovieDTO) {
             cardView.buttonFavorite.setFavoriteImage(movie.isFavorite)
             cardView.buttonFavorite.setOnClickListener {
                 movie.isFavorite = !movie.isFavorite
@@ -99,11 +99,16 @@ class TopRatedMoviesAdapter(private val presenter: CardViewPresenter) :
         }
 
         override fun setOverview(overview: String) {
+            val truncatedIndex = when (overview.length > 90) {true -> 90 false -> overview.length}
+            val truncated = when (truncatedIndex > overview.length) {
+                true -> overview.substring(0, overview.indexOf(' ', truncatedIndex))
+                false -> overview
+            }
             cardView.movieOverview.setTextWithBoldTitle(
                 cardView.root.context.getString(R.string.details_movie_overview),
                 cardView.root.context.getString(
                     R.string.overview_short,
-                    overview.substring(0, overview.indexOf(' ', 90))
+                    truncated
                 )
             )
         }
