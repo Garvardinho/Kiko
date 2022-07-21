@@ -1,27 +1,29 @@
 package com.garvardinho.kiko.model
 
-import com.garvardinho.kiko.model.realm.RealmDataSource
+import com.garvardinho.kiko.model.realm.IRealmDataSource
+import com.garvardinho.kiko.model.retrofit.IRemoteDataSource
 import com.garvardinho.kiko.model.retrofit.MovieDTO
 import com.garvardinho.kiko.model.retrofit.MovieListDTO
-import com.garvardinho.kiko.model.retrofit.RetrofitDataSource
 import com.garvardinho.kiko.model.room.*
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
+import javax.inject.Inject
 
-class RepositoryImpl(
-    private val retrofitDataSource: RetrofitDataSource,
-    private val realmDataSource: RealmDataSource,
+class RepositoryImpl @Inject constructor(
+    private val remoteDataSource: IRemoteDataSource,
+    private val realmDataSource: IRealmDataSource,
+    private val cacheDao: MovieListDao,
 ) : Repository {
     override fun loadNowPlayingMoviesFromServer(): Single<MovieListDTO> {
-        return retrofitDataSource.loadNowPlayingMovies()
+        return remoteDataSource.loadNowPlayingMovies()
     }
 
     override fun loadUpcomingMoviesFromServer(): Single<MovieListDTO> {
-        return retrofitDataSource.loadUpcomingMovies()
+        return remoteDataSource.loadUpcomingMovies()
     }
 
     override fun loadTopRatedMoviesFromServer(): Single<MovieListDTO> {
-        return retrofitDataSource.loadTopRatedMovies()
+        return remoteDataSource.loadTopRatedMovies()
     }
 
     override fun loadFavoriteMoviesFromRealm(): List<MovieDTO> {
@@ -37,7 +39,7 @@ class RepositoryImpl(
     }
 
     override fun loadNowPlayingMoviesFromCache(): Single<List<MovieDTO>> {
-        return AppDatabase.getInstance().movieListDao().loadNowPlayingMoviesFromCache().map {
+        return cacheDao.loadNowPlayingMoviesFromCache().map {
             it.map { roomMovie ->
                 MovieDTO(
                     title = roomMovie.title,
@@ -52,7 +54,7 @@ class RepositoryImpl(
     }
 
     override fun loadUpcomingMoviesFromCache(): Single<List<MovieDTO>> {
-        return AppDatabase.getInstance().movieListDao().loadUpcomingMoviesFromCache().map {
+        return cacheDao.loadUpcomingMoviesFromCache().map {
             it.map { roomMovie ->
                 MovieDTO(
                     title = roomMovie.title,
@@ -67,7 +69,7 @@ class RepositoryImpl(
     }
 
     override fun loadTopRatedMoviesFromCache(): Single<List<MovieDTO>> {
-        return AppDatabase.getInstance().movieListDao().loadTopRatedMoviesFromCache().map {
+        return cacheDao.loadTopRatedMoviesFromCache().map {
             it.map { roomMovie ->
                 MovieDTO(
                     title = roomMovie.title,
@@ -83,7 +85,7 @@ class RepositoryImpl(
 
     override fun cacheNowPlayingMovies(movies: List<MovieDTO>) {
         Single.fromCallable {
-            AppDatabase.getInstance().movieListDao().cacheNowPlayingMovies(movies.map {
+            cacheDao.cacheNowPlayingMovies(movies.map {
                 RoomMovie(
                     title = it.title,
                     posterPath = it.poster_path,
@@ -99,7 +101,7 @@ class RepositoryImpl(
 
     override fun cacheUpcomingMovies(movies: List<MovieDTO>) {
         Single.fromCallable {
-            AppDatabase.getInstance().movieListDao().cacheUpcomingMovies(movies.map {
+            cacheDao.cacheUpcomingMovies(movies.map {
                 RoomMovie(
                     title = it.title,
                     posterPath = it.poster_path,
@@ -115,7 +117,7 @@ class RepositoryImpl(
 
     override fun cacheTopRatedMovies(movies: List<MovieDTO>) {
         Single.fromCallable {
-            AppDatabase.getInstance().movieListDao().cacheTopRatedMovies(movies.map {
+            cacheDao.cacheTopRatedMovies(movies.map {
                 RoomMovie(
                     title = it.title,
                     posterPath = it.poster_path,

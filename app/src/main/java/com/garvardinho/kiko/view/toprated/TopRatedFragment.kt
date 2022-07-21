@@ -18,17 +18,26 @@ import com.garvardinho.kiko.presenter.toprated.TopRatedViewPresenter
 import com.garvardinho.kiko.view.screens.AndroidScreens
 import com.garvardinho.kiko.view.BackButtonListener
 import com.garvardinho.kiko.view.KOnItemClickListener
-import com.garvardinho.kiko.view.home.SORT_BY_DATE
-import com.garvardinho.kiko.view.home.SORT_BY_RATING
-import com.garvardinho.kiko.view.home.SORT_BY_TITLE
+import com.garvardinho.kiko.view.home.HomeFragment.Companion.SORT_BY_DATE
+import com.garvardinho.kiko.view.home.HomeFragment.Companion.SORT_BY_TITLE
+import com.garvardinho.kiko.view.home.HomeFragment.Companion.SORT_BY_RATING
+import com.github.terrakok.cicerone.Router
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
+import javax.inject.Inject
 
 class TopRatedFragment : MvpAppCompatFragment(), TopRatedView, BackButtonListener {
 
+    @Inject
+    lateinit var router: Router
+
     private var _binding: FragmentTopRatedBinding? = null
     private val binding get() = _binding!!
-    private val presenter by moxyPresenter { TopRatedViewPresenter(App.instance.router) }
+    private val presenter by moxyPresenter {
+        TopRatedViewPresenter().apply {
+            App.instance.appComponent.inject(this)
+        }
+    }
     private val adapter by lazy { TopRatedMoviesAdapter(presenter.topRatedCardViewPresenter) }
 
     override fun onCreateView(
@@ -55,6 +64,7 @@ class TopRatedFragment : MvpAppCompatFragment(), TopRatedView, BackButtonListene
             }
             popupMenu.show()
         }
+        App.instance.appComponent.inject(this)
     }
 
     override fun showTopRatedMovies(movies: List<MovieDTO>) {
@@ -68,7 +78,7 @@ class TopRatedFragment : MvpAppCompatFragment(), TopRatedView, BackButtonListene
 
         adapter.setOnItemClickListener(object : KOnItemClickListener {
             override fun setListener(v: View, position: Int) {
-                App.instance.router.navigateTo(AndroidScreens.detailsScreen(
+                router.navigateTo(AndroidScreens.detailsScreen(
                     presenter.topRatedCardViewPresenter.getMovie(position))
                 )
             }

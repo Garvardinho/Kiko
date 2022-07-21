@@ -5,32 +5,27 @@ import android.view.MenuItem
 import com.garvardinho.kiko.App
 import com.garvardinho.kiko.R
 import com.garvardinho.kiko.databinding.MainActivityBinding
-import com.garvardinho.kiko.model.room.AppDatabase
-import com.garvardinho.kiko.view.screens.AndroidScreens
 import com.garvardinho.kiko.view.home.HomeFragment
+import com.garvardinho.kiko.view.screens.AndroidScreens
+import com.github.terrakok.cicerone.NavigatorHolder
+import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.androidx.AppNavigator
 import com.google.android.material.navigation.NavigationBarView
-import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.schedulers.Schedulers
-import io.realm.Realm
-import io.realm.RealmConfiguration
 import moxy.MvpAppCompatActivity
+import javax.inject.Inject
 
 class MainActivity : MvpAppCompatActivity() {
 
+    @Inject
+    lateinit var navigatorHolder: NavigatorHolder
+
+    @Inject
+    lateinit var router: Router
     private lateinit var mainActivityBinding: MainActivityBinding
     private val navigator = AppNavigator(this, R.id.main_fragment)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        Realm.init(this)
-        Realm.setDefaultConfiguration(
-            RealmConfiguration.Builder()
-                .allowWritesOnUiThread(true)
-                .allowQueriesOnUiThread(true)
-                .build()
-        )
 
         mainActivityBinding = MainActivityBinding.inflate(layoutInflater)
         setContentView(mainActivityBinding.root)
@@ -42,16 +37,17 @@ class MainActivity : MvpAppCompatActivity() {
         supportActionBar?.title = null
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         initBottomNavigation()
+        App.instance.appComponent.inject(this)
     }
 
     override fun onResumeFragments() {
         super.onResumeFragments()
-        App.instance.navigationHolder.setNavigator(navigator)
+        navigatorHolder.setNavigator(navigator)
     }
 
     override fun onPause() {
         super.onPause()
-        App.instance.navigationHolder.removeNavigator()
+        navigatorHolder.removeNavigator()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -69,17 +65,17 @@ class MainActivity : MvpAppCompatActivity() {
         bottomNavigationView.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.action_home -> {
-                    App.instance.router.navigateTo(AndroidScreens.homeScreen())
+                    router.navigateTo(AndroidScreens.homeScreen())
                     return@setOnItemSelectedListener true
                 }
 
                 R.id.action_favorites -> {
-                    App.instance.router.navigateTo(AndroidScreens.favoriteScreen())
+                    router.navigateTo(AndroidScreens.favoriteScreen())
                     return@setOnItemSelectedListener true
                 }
 
                 R.id.action_ratings -> {
-                    App.instance.router.navigateTo(AndroidScreens.topRatedScreen())
+                    router.navigateTo(AndroidScreens.topRatedScreen())
                     return@setOnItemSelectedListener true
                 }
             }

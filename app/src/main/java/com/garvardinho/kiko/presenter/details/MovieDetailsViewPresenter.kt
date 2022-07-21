@@ -1,24 +1,26 @@
 package com.garvardinho.kiko.presenter.details
 
-import com.garvardinho.kiko.model.retrofit.MovieDTO
 import com.garvardinho.kiko.model.Repository
-import com.garvardinho.kiko.model.RepositoryImpl
-import com.garvardinho.kiko.model.realm.RealmDataSource
-import com.garvardinho.kiko.model.retrofit.RemoteDataSource
+import com.garvardinho.kiko.model.retrofit.MovieDTO
 import com.garvardinho.kiko.presenter.ViewDelegate
 import com.garvardinho.kiko.view.details.DetailsView
 import com.github.terrakok.cicerone.Router
 import moxy.MvpPresenter
+import javax.inject.Inject
 
-class MovieDetailsViewPresenter(private val router: Router) : MvpPresenter<DetailsView>(), ViewDelegate {
+class MovieDetailsViewPresenter : MvpPresenter<DetailsView>(), ViewDelegate {
 
-    private val repositoryRealm: Repository = RepositoryImpl(RemoteDataSource(), RealmDataSource())
+    @Inject
+    lateinit var router: Router
+
+    @Inject
+    lateinit var repository: Repository
 
     override fun manageFavorite(movie: MovieDTO) {
         if (movie.isFavorite) {
-            repositoryRealm.putMovieIntoRealm(movie)
+            repository.putMovieIntoRealm(movie)
         } else {
-            repositoryRealm.deleteMovieFromRealm(movie)
+            repository.deleteMovieFromRealm(movie)
         }
     }
 

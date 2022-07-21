@@ -9,10 +9,15 @@ import com.garvardinho.kiko.view.toprated.TopRatedView
 import com.github.terrakok.cicerone.Router
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import moxy.MvpPresenter
+import javax.inject.Inject
 
-class TopRatedViewPresenter(private val router: Router) : MvpPresenter<TopRatedView>(), TopRatedViewDelegate {
+class TopRatedViewPresenter : MvpPresenter<TopRatedView>(), TopRatedViewDelegate {
 
-    private val repository: Repository = RepositoryImpl(RemoteDataSource(), RealmDataSource())
+    @Inject
+    lateinit var router: Router
+
+    @Inject
+    lateinit var repository: Repository
     val topRatedCardViewPresenter = TopRatedCardViewPresenter()
 
     override fun onFirstViewAttach() {

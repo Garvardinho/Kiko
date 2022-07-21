@@ -3,8 +3,8 @@ package com.garvardinho.kiko.presenter.home
 import com.garvardinho.kiko.model.retrofit.MovieDTO
 import com.garvardinho.kiko.presenter.CardViewPresenter
 import com.garvardinho.kiko.view.KikoCardView
-import com.garvardinho.kiko.view.home.SORT_BY_DATE
-import com.garvardinho.kiko.view.home.SORT_BY_TITLE
+import com.garvardinho.kiko.view.home.HomeFragment.Companion.SORT_BY_DATE
+import com.garvardinho.kiko.view.home.HomeFragment.Companion.SORT_BY_TITLE
 
 class UpcomingCardViewPresenter : CardViewPresenter {
 

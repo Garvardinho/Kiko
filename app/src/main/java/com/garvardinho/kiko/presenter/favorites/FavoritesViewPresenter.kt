@@ -8,10 +8,15 @@ import com.garvardinho.kiko.model.retrofit.RemoteDataSource
 import com.garvardinho.kiko.view.favorites.FavoritesView
 import com.github.terrakok.cicerone.Router
 import moxy.MvpPresenter
+import javax.inject.Inject
 
-class FavoritesViewPresenter(private val router: Router) : MvpPresenter<FavoritesView>(), FavoritesViewDelegate {
+class FavoritesViewPresenter : MvpPresenter<FavoritesView>(), FavoritesViewDelegate {
 
-    private val repository: Repository = RepositoryImpl(RemoteDataSource(), RealmDataSource())
+    @Inject
+    lateinit var router: Router
+
+    @Inject
+    lateinit var repository: Repository
     val favoritesCardViewPresenter = FavoritesCardViewPresenter()
 
     override fun onFirstViewAttach() {

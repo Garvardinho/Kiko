@@ -17,15 +17,17 @@ import com.squareup.picasso.Picasso
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 
-private const val MOVIE = "MovieDetailsFragment.Movie"
-
 class MovieDetailsFragment : MvpAppCompatFragment(), DetailsView, BackButtonListener {
 
     private var _movieDTO: MovieDTO? = null
     private val movie get() = _movieDTO!!
     private var _binding: FragmentMovieDetailsBinding? = null
     private val binding get() = _binding!!
-    private val presenter by moxyPresenter { MovieDetailsViewPresenter(App.instance.router) }
+    private val presenter by moxyPresenter {
+        MovieDetailsViewPresenter().apply {
+            App.instance.appComponent.inject(this)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,7 +55,8 @@ class MovieDetailsFragment : MvpAppCompatFragment(), DetailsView, BackButtonList
     private fun setData() {
         binding.movieTitle.setTextWithBoldTitle(getString(R.string.details_movie_title),
             movie.title)
-        binding.movieDate.setTextWithBoldTitle(getString(R.string.details_movie_date), movie.release_date ?: "Unknown")
+        binding.movieDate.setTextWithBoldTitle(getString(R.string.details_movie_date),
+            movie.release_date ?: "Unknown")
         binding.movieRating.setTextWithBoldTitle(getString(R.string.details_movie_rating),
             movie.vote_average.toString())
         binding.movieOverview.setTextWithBoldTitle(getString(R.string.details_movie_overview),
@@ -98,6 +101,8 @@ class MovieDetailsFragment : MvpAppCompatFragment(), DetailsView, BackButtonList
     }
 
     companion object {
+        private const val MOVIE = "MovieDetailsFragment.Movie"
+
         @JvmStatic
         fun newInstance(movieDTO: MovieDTO) =
             MovieDetailsFragment().apply {
