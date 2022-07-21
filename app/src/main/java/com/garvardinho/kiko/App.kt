@@ -1,19 +1,18 @@
 package com.garvardinho.kiko
 
 import android.app.Application
+import com.garvardinho.kiko.model.di.components.AppComponent
+import com.garvardinho.kiko.model.di.components.DaggerAppComponent
+import com.garvardinho.kiko.model.di.modules.AppModule
 import com.garvardinho.kiko.model.room.AppDatabase
-import com.github.terrakok.cicerone.Cicerone
-import com.github.terrakok.cicerone.Router
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
+import io.realm.Realm
+import io.realm.RealmConfiguration
 
 class App : Application() {
 
-    private val cicerone: Cicerone<Router> by lazy {
-        Cicerone.create()
-    }
-    val navigationHolder get() = cicerone.getNavigatorHolder()
-    val router get() = cicerone.router
+    lateinit var appComponent: AppComponent
 
     override fun onCreate() {
         super.onCreate()
@@ -22,6 +21,18 @@ class App : Application() {
         Single.fromCallable {
             AppDatabase.getInstance().movieListDao().clearCache()
         }.subscribeOn(Schedulers.computation()).subscribe()
+        
+        Realm.init(this)
+        Realm.setDefaultConfiguration(
+            RealmConfiguration.Builder()
+                .allowWritesOnUiThread(true)
+                .allowQueriesOnUiThread(true)
+                .build()
+        )
+        appComponent = DaggerAppComponent
+            .builder()
+            .appModule(AppModule(this))
+            .build()
     }
 
     companion object {

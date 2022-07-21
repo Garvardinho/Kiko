@@ -17,18 +17,23 @@ import com.garvardinho.kiko.presenter.home.HomeViewPresenter
 import com.garvardinho.kiko.view.screens.AndroidScreens
 import com.garvardinho.kiko.view.BackButtonListener
 import com.garvardinho.kiko.view.KOnItemClickListener
+import com.github.terrakok.cicerone.Router
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
-
-const val SORT_BY_RATING: Int = 0
-const val SORT_BY_DATE: Int = 1
-const val SORT_BY_TITLE: Int = 2
+import javax.inject.Inject
 
 class HomeFragment : MvpAppCompatFragment(), HomeView, BackButtonListener {
 
+    @Inject
+    lateinit var router: Router
+
     private var _binding: HomeFragmentBinding? = null
     private val binding get() = _binding!!
-    private val presenter by moxyPresenter { HomeViewPresenter(App.instance.router) }
+    private val presenter by moxyPresenter {
+        HomeViewPresenter().apply {
+            App.instance.appComponent.inject(this)
+        }
+    }
     private val nowPlayingMoviesAdapter by lazy { NowPlayingMoviesAdapter(presenter.nowPlayingCardViewPresenter) }
     private val upcomingMoviesAdapter by lazy { UpcomingMoviesAdapter(presenter.upcomingCardViewPresenter) }
 
@@ -37,6 +42,7 @@ class HomeFragment : MvpAppCompatFragment(), HomeView, BackButtonListener {
         savedInstanceState: Bundle?,
     ): View {
         _binding = HomeFragmentBinding.inflate(inflater, container, false)
+        App.instance.appComponent.inject(this)
         setHasOptionsMenu(true)
         return binding.root
     }
@@ -85,7 +91,7 @@ class HomeFragment : MvpAppCompatFragment(), HomeView, BackButtonListener {
 
         nowPlayingMoviesAdapter.setOnItemClickListener(object : KOnItemClickListener {
             override fun setListener(v: View, position: Int) {
-                App.instance.router.navigateTo(AndroidScreens.detailsScreen(
+                router.navigateTo(AndroidScreens.detailsScreen(
                     presenter.nowPlayingCardViewPresenter.getMovie(position))
                 )
             }
@@ -105,7 +111,7 @@ class HomeFragment : MvpAppCompatFragment(), HomeView, BackButtonListener {
 
         upcomingMoviesAdapter.setOnItemClickListener(object : KOnItemClickListener {
             override fun setListener(v: View, position: Int) {
-                App.instance.router.navigateTo(AndroidScreens.detailsScreen(
+                router.navigateTo(AndroidScreens.detailsScreen(
                     presenter.upcomingCardViewPresenter.getMovie(position))
                 )
             }
@@ -211,5 +217,11 @@ class HomeFragment : MvpAppCompatFragment(), HomeView, BackButtonListener {
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()
+    }
+
+    companion object {
+        const val SORT_BY_RATING: Int = 0
+        const val SORT_BY_DATE: Int = 1
+        const val SORT_BY_TITLE: Int = 2
     }
 }

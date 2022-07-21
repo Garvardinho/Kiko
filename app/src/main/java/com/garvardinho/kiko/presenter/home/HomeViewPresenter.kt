@@ -1,18 +1,20 @@
 package com.garvardinho.kiko.presenter.home
 
 import com.garvardinho.kiko.model.Repository
-import com.garvardinho.kiko.model.RepositoryImpl
-import com.garvardinho.kiko.model.realm.RealmDataSource
 import com.garvardinho.kiko.model.retrofit.MovieDTO
-import com.garvardinho.kiko.model.retrofit.RemoteDataSource
 import com.garvardinho.kiko.view.home.HomeView
 import com.github.terrakok.cicerone.Router
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import moxy.MvpPresenter
+import javax.inject.Inject
 
-class HomeViewPresenter(private val router: Router) : MvpPresenter<HomeView>(), HomeViewDelegate {
+class HomeViewPresenter : MvpPresenter<HomeView>(), HomeViewDelegate {
 
-    private val repository: Repository = RepositoryImpl(RemoteDataSource(), RealmDataSource())
+    @Inject
+    lateinit var router: Router
+
+    @Inject
+    lateinit var repository: Repository
     val nowPlayingCardViewPresenter = NowPlayingCardViewPresenter()
     val upcomingCardViewPresenter = UpcomingCardViewPresenter()
 
